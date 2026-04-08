@@ -342,7 +342,8 @@ footer { background-color: #333; color: #fff; text-align: center; padding: 20px 
 .modal-content {
     background: white;
     margin: 10% auto;
-    padding: 30px;
+    /* Увеличили верхний отступ, чтобы крестик не наезжал на вкладки */
+    padding: 40px 30px 30px;
     width: 90%;
     max-width: 400px;
     border-radius: 12px;
@@ -353,12 +354,13 @@ footer { background-color: #333; color: #fff; text-align: center; padding: 20px 
 /* Кнопка закрытия модального окна */
 .close-modal {
     position: absolute;
-    right: 20px;
-    top: 10px;
-    font-size: 28px;
+    right: 15px; /* Сдвинули ближе к правому краю */
+    top: 5px; /* Подняли выше над вкладками */
+    font-size: 32px; /* Сделали чуть крупнее */
     cursor: pointer;
     color: #95a5a6;
     z-index: 10;
+    line-height: 1; /* Чтобы крестик не растягивал пространство вокруг себя */
 }
 
 /* Личные кабинеты */
