@@ -304,16 +304,16 @@ footer { background-color: #333; color: #fff; text-align: center; padding: 20px 
     .slider-container { padding: 0 35px; }
 }
 
-/* =========================================
-   НОВЫЕ СТИЛИ (МОДАЛКА, КАБИНЕТ, КНОПКА)
-   ========================================= */
+/* ========================================================
+   СИСТЕМА КАБИНЕТА, РОЛЕЙ И АВТОРИЗАЦИИ
+   ======================================================== */
 
 /* Кнопка в меню */
 .auth-nav-btn {
     background-color: #3498db;
     color: white;
     border: none;
-    padding: 8px 20px;
+    padding: 8px 18px;
     border-radius: 20px;
     font-family: 'Montserrat', sans-serif;
     font-weight: 700;
@@ -350,6 +350,7 @@ footer { background-color: #333; color: #fff; text-align: center; padding: 20px 
     box-shadow: 0 10px 30px rgba(0,0,0,0.3);
 }
 
+/* Кнопка закрытия модального окна */
 .close-modal {
     position: absolute;
     right: 20px;
@@ -357,11 +358,66 @@ footer { background-color: #333; color: #fff; text-align: center; padding: 20px 
     font-size: 28px;
     cursor: pointer;
     color: #95a5a6;
+    z-index: 10;
 }
 
-/* Личный кабинет */
+/* Личные кабинеты */
 .lk-section {
     padding: 60px 0;
     background-color: #f4f7f6;
     min-height: 70vh;
+}
+
+/* Стили для таблицы Админа */
+.admin-table { 
+    width: 100%; 
+    border-collapse: collapse; 
+    margin-top: 15px; 
+    font-size: 0.9em; 
+}
+.admin-table th, .admin-table td { 
+    padding: 12px 15px; 
+    border-bottom: 1px solid #eee; 
+    text-align: left; 
+}
+.admin-table th { 
+    background-color: #f4f7f6; 
+    color: #2c3e50; 
+    font-weight: 700; 
+}
+.admin-table tr:hover { 
+    background-color: #fcfcfc; 
+}
+
+/* Кнопки внутри кабинетов */
+.logout-btn { 
+    cursor: pointer; 
+    padding: 8px 15px; 
+    border: 1px solid #e74c3c; 
+    color: #e74c3c; 
+    background: none; 
+    border-radius: 5px; 
+    font-weight: bold; 
+    transition: 0.3s; 
+}
+.logout-btn:hover { 
+    background: #e74c3c; 
+    color: white; 
+}
+
+.action-btn { 
+    background-color: #3498db; 
+    color: white; 
+    border: none; 
+    padding: 6px 12px; 
+    border-radius: 5px; 
+    cursor: pointer; 
+    font-family: 'Montserrat', sans-serif; 
+    font-weight: 700; 
+    font-size: 0.8em; 
+    transition: 0.3s; 
+}
+.action-btn:hover { 
+    background-color: #2980b9; 
+    transform: scale(1.05); 
 }
