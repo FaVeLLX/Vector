@@ -68,6 +68,7 @@ nav ul {
     margin: 0;
     padding: 0;
     display: flex;
+    align-items: center;
 }
 
 nav ul li {
@@ -87,9 +88,7 @@ nav a:hover {
 
 /* --- Главный блок (Hero) --- */
 .hero {
-    /* Правильное название файла */
     background-image: url('hero-bg.png');
-    
     background-size: cover;
     background-position: center;
     background-color: #2c3e50; 
@@ -154,7 +153,7 @@ nav a:hover {
     box-shadow: 0 8px 20px rgba(0,0,0,0.3);
 }
 
-/* --- СТИЛИ ДЛЯ ВКЛАДОК (МАТЕМАТИКА / РУССКИЙ) --- */
+/* --- СТИЛИ ДЛЯ ВКЛАДОК --- */
 .tabs-container {
     display: flex;
     justify-content: center;
@@ -263,7 +262,7 @@ main section { padding: 60px 0; }
 .contact-info a { color: #f39c12; text-decoration: none; }
 .contact-info a:hover { text-decoration: underline; }
 
-/* Форма и подвал */
+/* Форма */
 .booking-form { max-width: 600px; margin: 30px auto; background: rgba(255,255,255,0.1); padding: 30px; border-radius: 10px; }
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
 .form-input, .form-select, .form-textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px; font-family: 'Montserrat', sans-serif; box-sizing: border-box; }
@@ -282,6 +281,15 @@ main section { padding: 60px 0; }
 
 footer { background-color: #333; color: #fff; text-align: center; padding: 20px 0; }
 
+/* Слайдер */
+.slider-container { max-width: 800px; margin: 0 auto; position: relative; overflow: hidden; padding: 20px 0; }
+.slider-track { display: flex; transition: transform 0.5s ease-in-out; }
+.review-slide { min-width: 100%; box-sizing: border-box; padding: 0 10px; }
+.slider-btn { position: absolute; top: 50%; transform: translateY(-50%); background-color: #fff; color: #2c3e50; border: 2px solid #f39c12; width: 40px; height: 40px; border-radius: 50%; font-size: 1.2em; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; user-select: none; }
+.slider-btn:hover { background-color: #f39c12; color: white; }
+.prev-btn { left: 0; }
+.next-btn { right: 0; }
+
 @media (max-width: 768px) {
     h2 { font-size: 2em; }
     header .container { flex-direction: column; }
@@ -292,65 +300,68 @@ footer { background-color: #333; color: #fff; text-align: center; padding: 20px 
     .form-row { grid-template-columns: 1fr; }
     .booking-form { padding: 20px; margin: 20px auto; }
     .category-title { text-align: center; border-left: none; border-bottom: 3px solid #f39c12; padding-bottom: 10px; padding-left: 0; margin-top: 30px; }
+    .slider-btn { width: 35px; height: 35px; font-size: 1em; }
+    .slider-container { padding: 0 35px; }
 }
 
-/* --- СТИЛИ ДЛЯ СЛАЙДЕРА ОТЗЫВОВ --- */
-.slider-container {
-    max-width: 800px;
-    margin: 0 auto;
-    position: relative;
-    overflow: hidden; /* Скрывает соседние отзывы */
-    padding: 20px 0;
-}
+/* =========================================
+   НОВЫЕ СТИЛИ (МОДАЛКА, КАБИНЕТ, КНОПКА)
+   ========================================= */
 
-.slider-track {
-    display: flex;
-    transition: transform 0.5s ease-in-out; /* Плавная анимация */
-}
-
-.review-slide {
-    min-width: 100%; /* Один отзыв занимает 100% ширины контейнера */
-    box-sizing: border-box;
-    padding: 0 10px; /* Отступы между слайдами */
-}
-
-/* Кнопки переключения (стрелки) */
-.slider-btn {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background-color: #fff;
-    color: #2c3e50;
-    border: 2px solid #f39c12;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    font-size: 1.2em;
-    cursor: pointer;
-    z-index: 10;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s ease;
-    user-select: none;
-}
-
-.slider-btn:hover {
-    background-color: #f39c12;
+/* Кнопка в меню */
+.auth-nav-btn {
+    background-color: #3498db;
     color: white;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.3s;
 }
 
-.prev-btn { left: 0; }
-.next-btn { right: 0; }
+.auth-nav-btn:hover {
+    background-color: #2980b9;
+    transform: scale(1.05);
+}
 
-/* Адаптация для телефонов: кнопки чуть меньше */
-@media (max-width: 768px) {
-    .slider-btn {
-        width: 35px;
-        height: 35px;
-        font-size: 1em;
-    }
-    .slider-container {
-        padding: 0 35px; /* Чтобы кнопки не перекрывали текст */
-    }
+/* Модальное окно */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1001;
+    left: 0; 
+    top: 0; 
+    width: 100%; 
+    height: 100%;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(5px);
+}
+
+.modal-content {
+    background: white;
+    margin: 10% auto;
+    padding: 30px;
+    width: 90%;
+    max-width: 400px;
+    border-radius: 12px;
+    position: relative;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.close-modal {
+    position: absolute;
+    right: 20px;
+    top: 15px;
+    font-size: 28px;
+    cursor: pointer;
+    color: #95a5a6;
+}
+
+/* Личный кабинет */
+.lk-section {
+    padding: 60px 0;
+    background-color: #f4f7f6;
+    min-height: 70vh;
 }
