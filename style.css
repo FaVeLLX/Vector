@@ -353,7 +353,7 @@ footer { background-color: #333; color: #fff; text-align: center; padding: 20px 
 .close-modal {
     position: absolute;
     right: 20px;
-    top: 15px;
+    top: 10px;
     font-size: 28px;
     cursor: pointer;
     color: #95a5a6;
