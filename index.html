@@ -292,10 +292,15 @@
                         </div>
                         <p id="student-progress-text" style="font-weight: bold; color: #2c3e50;">Пройдено: 0%</p>
                     </div>
-                    <div class="service-card highlight">
-                        <h3>Твои занятия</h3>
-                        <p>Свяжись с учителем для получения материалов и ссылки на Zoom.</p>
-                        <a href="https://t.me/VectorSchoolSupp" target="_blank" class="action-btn" style="display: inline-block; margin-top: 10px; text-decoration: none;">Написать учителю</a>
+                    
+                    <div class="service-card highlight" style="text-align: left;">
+                        <h3 style="text-align: center;">Твои занятия</h3>
+                        <div id="student-lesson-content">
+                            <p style="text-align: center;">Свяжись с учителем для получения материалов и ссылки на Zoom.</p>
+                            <div style="text-align: center;">
+                                <a href="https://t.me/VectorSchoolSupp" target="_blank" class="action-btn" style="display: inline-block; margin-top: 10px; text-decoration: none;">Написать учителю</a>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -304,7 +309,7 @@
 
     <div id="auth-modal" class="modal">
         <div class="modal-content">
-            <span class="close-modal">&times;</span>
+            <span class="close-modal" id="close-auth-modal">&times;</span>
             <div id="auth-tabs-header" style="display: flex; margin-bottom: 25px; border-bottom: 2px solid #eee;">
                 <button id="tab-login" class="tab-btn active" style="flex: 1; border: none; border-radius: 0; padding: 12px; font-size: 1.1em;" onclick="switchAuthTab('login')">Вход</button>
                 <button id="tab-register" class="tab-btn" style="flex: 1; border: none; border-radius: 0; padding: 12px; font-size: 1.1em;" onclick="switchAuthTab('register')">Регистрация</button>
@@ -316,6 +321,24 @@
                 <input type="password" id="auth-password" placeholder="Пароль" required class="form-input" style="margin-bottom:20px;">
                 <button type="submit" id="auth-submit-btn" class="submit-btn">Войти в кабинет</button>
                 <div id="auth-error" style="color: #e74c3c; margin-top: 10px; text-align: center; font-size: 0.9em; font-weight: bold;"></div>
+            </form>
+        </div>
+    </div>
+
+    <div id="lesson-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" id="close-lesson-modal">&times;</span>
+            <h3 style="text-align:center; margin-bottom:20px; color: #2c3e50;">Урок для ученика</h3>
+            <form id="set-lesson-form">
+                <input type="hidden" id="lesson-user-id">
+                
+                <input type="text" id="lesson-topic" placeholder="Тема урока (напр. Геометрия)" required class="form-input" style="margin-bottom:15px;">
+                <input type="text" id="lesson-time" placeholder="Время (напр. Завтра в 16:00)" required class="form-input" style="margin-bottom:15px;">
+                <input type="url" id="lesson-zoom" placeholder="Ссылка на Zoom" required class="form-input" style="margin-bottom:15px;">
+                
+                <textarea id="lesson-hw" placeholder="Домашнее задание (можно добавить позже)..." class="form-textarea" style="margin-bottom:20px; min-height: 60px;"></textarea>
+                
+                <button type="submit" id="lesson-submit-btn" class="submit-btn">Сохранить</button>
             </form>
         </div>
     </div>
@@ -345,9 +368,17 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        const modal = document.getElementById("auth-modal");
+        // Глобальный кэш учеников (чтобы помнить старые уроки)
+        window.studentsCache = {};
+
+        const authModal = document.getElementById("auth-modal");
         const authBtn = document.getElementById("auth-btn");
-        const closeBtn = document.querySelector(".close-modal");
+        const closeAuthBtn = document.getElementById("close-auth-modal");
+        
+        const lessonModal = document.getElementById("lesson-modal");
+        const closeLessonBtn = document.getElementById("close-lesson-modal");
+        const setLessonForm = document.getElementById("set-lesson-form");
+
         const mainContent = document.getElementById("main-content");
         const lkContainer = document.getElementById("lk-container");
         const adminContainer = document.getElementById("admin-container");
@@ -367,9 +398,14 @@
             authError.innerText = '';
         }
 
-        authBtn.onclick = () => { if (!auth.currentUser) modal.style.display = "block"; };
-        closeBtn.onclick = () => modal.style.display = "none";
-        window.onclick = (e) => { if (e.target == modal) modal.style.display = "none"; };
+        authBtn.onclick = () => { if (!auth.currentUser) authModal.style.display = "block"; };
+        closeAuthBtn.onclick = () => authModal.style.display = "none";
+        closeLessonBtn.onclick = () => lessonModal.style.display = "none";
+        
+        window.onclick = (e) => { 
+            if (e.target == authModal) authModal.style.display = "none"; 
+            if (e.target == lessonModal) lessonModal.style.display = "none"; 
+        };
 
         authForm.onsubmit = async (e) => {
             e.preventDefault();
@@ -391,8 +427,18 @@
                     await setDoc(doc(db, "users", user.uid), {
                         name: name, email: email, role: "student", progress: 0, registeredAt: new Date().toISOString()
                     });
+
+                    const tgToken = '8340993627:AAEu7ax6CSN643NTi-mwerzSzGV1I8Gt42U';
+                    const tgChat = '-1003612200808';
+                    const tgMessage = `🚀 *НОВАЯ РЕГИСТРАЦИЯ!*\n👤 *Имя:* ${name}\n📧 *Email:* ${email}`;
+                    
+                    fetch(`https://api.telegram.org/bot${tgToken}/sendMessage`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ chat_id: tgChat, message_thread_id: '2', text: tgMessage, parse_mode: 'Markdown' })
+                    }).catch(err => console.error("Ошибка TG:", err));
                 }
-                modal.style.display = "none";
+                authModal.style.display = "none";
                 authForm.reset();
             } catch (error) {
                 if (error.code === 'auth/email-already-in-use') authError.innerText = "Email уже зарегистрирован.";
@@ -412,18 +458,58 @@
             if (newProgress !== null && newProgress !== "") {
                 let val = parseInt(newProgress);
                 if (isNaN(val)) return alert('Введите число!');
-                if (val < 0) val = 0;
-                if (val > 100) val = 100;
-                
+                if (val < 0) val = 0; if (val > 100) val = 100;
                 try {
                     await updateDoc(doc(db, "users", userId), { progress: val });
                     loadStudents();
                 } catch (e) {
-                    console.error("Ошибка при обновлении:", e);
-                    alert('Ошибка при обновлении базы данных');
+                    console.error("Ошибка при обновлении:", e); alert('Ошибка при обновлении базы');
                 }
             }
         }
+
+        // ОТКРЫТИЕ ФОРМЫ УРОКА: Теперь она "вспоминает" старые данные!
+        window.openLessonModal = function(userId) {
+            document.getElementById('lesson-user-id').value = userId;
+            
+            // Берем старые данные из кэша, если они есть
+            const savedLesson = window.studentsCache[userId] || {};
+            
+            document.getElementById('lesson-topic').value = savedLesson.topic || '';
+            document.getElementById('lesson-time').value = savedLesson.time || '';
+            document.getElementById('lesson-zoom').value = savedLesson.zoom || '';
+            document.getElementById('lesson-hw').value = savedLesson.homework || '';
+            
+            lessonModal.style.display = "block";
+        }
+
+        // ОТПРАВКА УРОКА В БАЗУ
+        setLessonForm.onsubmit = async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('lesson-submit-btn');
+            btn.disabled = true; btn.innerText = "Отправка...";
+
+            const userId = document.getElementById('lesson-user-id').value;
+            const lessonData = {
+                topic: document.getElementById('lesson-topic').value,
+                time: document.getElementById('lesson-time').value,
+                zoom: document.getElementById('lesson-zoom').value,
+                homework: document.getElementById('lesson-hw').value
+            };
+
+            try {
+                await updateDoc(doc(db, "users", userId), { lesson: lessonData });
+                lessonModal.style.display = "none";
+                setLessonForm.reset();
+                loadStudents(); // Перезагружаем, чтобы обновить кэш
+                alert('Урок успешно сохранен!');
+            } catch (error) {
+                console.error("Ошибка добавления урока:", error);
+                alert("Ошибка сохранения.");
+            } finally {
+                btn.disabled = false; btn.innerText = "Сохранить";
+            }
+        };
 
         async function loadStudents() {
             const list = document.getElementById('students-list');
@@ -436,7 +522,9 @@
                     const userId = docSnap.id;
                     
                     if(user.role === 'student') {
-                        // FIX: Использован Flexbox для аккуратного выравнивания полосы и процентов
+                        // Сохраняем урок в кэш, чтобы форма могла его вспомнить
+                        window.studentsCache[userId] = user.lesson || {};
+
                         const row = `
                             <tr>
                                 <td><strong>${user.name}</strong></td>
@@ -449,7 +537,12 @@
                                         <span style="font-size: 0.9em; font-weight: bold; min-width: 40px; text-align: right; color: #2c3e50;">${user.progress}%</span>
                                     </div>
                                 </td>
-                                <td><button class="action-btn" onclick="updateProgress('${userId}', ${user.progress})">Изменить %</button></td>
+                                <td>
+                                    <div style="display: flex; gap: 5px;">
+                                        <button class="action-btn" onclick="updateProgress('${userId}', ${user.progress})">Изменить %</button>
+                                        <button class="action-btn" style="background-color: #f39c12;" onclick="openLessonModal('${userId}')">Задать урок</button>
+                                    </div>
+                                </td>
                             </tr>
                         `;
                         list.innerHTML += row;
@@ -482,9 +575,27 @@
                             loadStudents();
                         } else {
                             main.style.display = 'none'; admin.style.display = 'none'; lk.style.display = 'block'; 
+                            
                             document.getElementById('lk-welcome').innerText = `Привет, ${userData.name}! 🚀`;
                             document.getElementById('student-progress-fill').style.width = `${userData.progress}%`;
                             document.getElementById('student-progress-text').innerText = `Пройдено: ${userData.progress}%`;
+
+                            const lessonContentBox = document.getElementById('student-lesson-content');
+                            if (userData.lesson) {
+                                // Если домашки нет, показываем аккуратную надпись вместо пустоты
+                                const hwText = userData.lesson.homework ? userData.lesson.homework : "<i>Появится после урока</i>";
+                                
+                                lessonContentBox.innerHTML = `
+                                    <p style="margin-bottom: 5px; color: #34495e;"><strong>Тема:</strong> ${userData.lesson.topic}</p>
+                                    <p style="margin-bottom: 5px; color: #34495e;"><strong>Время:</strong> ${userData.lesson.time}</p>
+                                    <div style="background: #fdf2e9; padding: 10px; border-left: 3px solid #f39c12; margin: 15px 0;">
+                                        <p style="margin: 0; font-size: 0.9em; color: #e67e22;"><strong>Домашнее задание:</strong><br>${hwText}</p>
+                                    </div>
+                                    <div style="text-align: center;">
+                                        <a href="${userData.lesson.zoom}" target="_blank" class="action-btn" style="display: inline-block; padding: 10px 20px; text-decoration: none; font-size: 1em;">Подключиться к Zoom</a>
+                                    </div>
+                                `;
+                            }
                         }
                     }
                 } catch (e) { console.error(e); }
@@ -496,7 +607,7 @@
 
     <script>
         const TELEGRAM_BOT_TOKEN = '8340993627:AAEu7ax6CSN643NTi-mwerzSzGV1I8Gt42U';
-        const TELEGRAM_CHAT_ID = '-4820463626';
+        const TELEGRAM_CHAT_ID = '-1003612200808';
 
         function openTab(evt, subjectName) {
             var i, tabcontent, tablinks;
@@ -551,7 +662,12 @@
             fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text: telegramMessage, parse_mode: 'Markdown' })
+                body: JSON.stringify({ 
+                    chat_id: TELEGRAM_CHAT_ID, 
+                    message_thread_id: '3', 
+                    text: telegramMessage, 
+                    parse_mode: 'Markdown' 
+                })
             })
             .then(response => response.json())
             .then(data => {
