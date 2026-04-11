@@ -296,7 +296,7 @@
                     <div class="service-card highlight" style="text-align: left;">
                         <h3 style="text-align: center;">Твои занятия</h3>
                         <div id="student-lesson-content">
-                            <p style="text-align: center;">Свяжись с учителем для получения материалов и ссылки на Zoom.</p>
+                            <p style="text-align: center;">Свяжись с учителем для получения материалов и ссылки на конференцию.</p>
                             <div style="text-align: center;">
                                 <a href="https://t.me/VectorSchoolSupp" target="_blank" class="action-btn" style="display: inline-block; margin-top: 10px; text-decoration: none;">Написать учителю</a>
                             </div>
@@ -334,7 +334,7 @@
                 
                 <input type="text" id="lesson-topic" placeholder="Тема урока (напр. Геометрия)" required class="form-input" style="margin-bottom:15px;">
                 <input type="text" id="lesson-time" placeholder="Время (напр. Завтра в 16:00)" required class="form-input" style="margin-bottom:15px;">
-                <input type="url" id="lesson-zoom" placeholder="Ссылка на Zoom" required class="form-input" style="margin-bottom:15px;">
+                <input type="url" id="lesson-zoom" placeholder="Ссылка на конференцию" required class="form-input" style="margin-bottom:15px;">
                 
                 <textarea id="lesson-hw" placeholder="Домашнее задание (можно добавить позже)..." class="form-textarea" style="margin-bottom:20px; min-height: 60px;"></textarea>
                 
@@ -368,7 +368,7 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // Глобальный кэш учеников (чтобы помнить старые уроки)
+        // Глобальный кэш учеников
         window.studentsCache = {};
 
         const authModal = document.getElementById("auth-modal");
@@ -468,11 +468,8 @@
             }
         }
 
-        // ОТКРЫТИЕ ФОРМЫ УРОКА: Теперь она "вспоминает" старые данные!
         window.openLessonModal = function(userId) {
             document.getElementById('lesson-user-id').value = userId;
-            
-            // Берем старые данные из кэша, если они есть
             const savedLesson = window.studentsCache[userId] || {};
             
             document.getElementById('lesson-topic').value = savedLesson.topic || '';
@@ -483,7 +480,6 @@
             lessonModal.style.display = "block";
         }
 
-        // ОТПРАВКА УРОКА В БАЗУ
         setLessonForm.onsubmit = async (e) => {
             e.preventDefault();
             const btn = document.getElementById('lesson-submit-btn');
@@ -501,7 +497,7 @@
                 await updateDoc(doc(db, "users", userId), { lesson: lessonData });
                 lessonModal.style.display = "none";
                 setLessonForm.reset();
-                loadStudents(); // Перезагружаем, чтобы обновить кэш
+                loadStudents(); 
                 alert('Урок успешно сохранен!');
             } catch (error) {
                 console.error("Ошибка добавления урока:", error);
@@ -522,7 +518,6 @@
                     const userId = docSnap.id;
                     
                     if(user.role === 'student') {
-                        // Сохраняем урок в кэш, чтобы форма могла его вспомнить
                         window.studentsCache[userId] = user.lesson || {};
 
                         const row = `
@@ -582,7 +577,6 @@
 
                             const lessonContentBox = document.getElementById('student-lesson-content');
                             if (userData.lesson) {
-                                // Если домашки нет, показываем аккуратную надпись вместо пустоты
                                 const hwText = userData.lesson.homework ? userData.lesson.homework : "<i>Появится после урока</i>";
                                 
                                 lessonContentBox.innerHTML = `
@@ -592,7 +586,7 @@
                                         <p style="margin: 0; font-size: 0.9em; color: #e67e22;"><strong>Домашнее задание:</strong><br>${hwText}</p>
                                     </div>
                                     <div style="text-align: center;">
-                                        <a href="${userData.lesson.zoom}" target="_blank" class="action-btn" style="display: inline-block; padding: 10px 20px; text-decoration: none; font-size: 1em;">Подключиться к Zoom</a>
+                                        <a href="${userData.lesson.zoom}" target="_blank" class="action-btn" style="display: inline-block; padding: 10px 20px; text-decoration: none; font-size: 1em;">Подключиться к конференции</a>
                                     </div>
                                 `;
                             }
