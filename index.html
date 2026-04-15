@@ -46,6 +46,35 @@
             color: white;
         }
     </style>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <style>
+        /* Стили уведомлений */
+        @keyframes pulse-red {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(231, 76, 60, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(231, 76, 60, 0); }
+        }
+        .badge-new { background-color: #e74c3c; color: white; padding: 4px 10px; border-radius: 12px; font-size: 0.8em; font-weight: bold; display: inline-block; animation: pulse-red 2s infinite; margin-left: 10px; }
+        .badge-clear-btn { background: none; border: 1px solid #e74c3c; color: #e74c3c; padding: 2px 8px; border-radius: 5px; cursor: pointer; font-size: 0.8em; margin-left: 10px; transition: 0.3s; }
+        .badge-clear-btn:hover { background: #e74c3c; color: white; }
+
+        /* Стили аккордеона теории */
+        .theory-accordion { background-color: #f8f9fa; color: #2c3e50; cursor: pointer; padding: 18px; width: 100%; border: 1px solid #eee; text-align: left; outline: none; font-size: 1.1em; font-weight: bold; transition: 0.4s; border-radius: 8px; margin-bottom: 5px; display: flex; justify-content: space-between; align-items: center; }
+        .theory-accordion:after { content: '\002B'; color: #777; font-weight: bold; margin-left: 5px; }
+        .theory-accordion.active:after { content: "\2212"; }
+        .theory-accordion.active, .theory-accordion:hover { background-color: #eef2f7; border-color: #3498db; }
+        .theory-panel { padding: 0 18px; background-color: white; max-height: 0; overflow: hidden; transition: max-height 0.2s ease-out; margin-bottom: 10px; }
+        .sub-accordion { background-color: #fff; font-size: 0.95em; border: 1px solid #f1f1f1; margin-top: 5px; color: #34495e; }
+
+        /* Стили для карточек с формулами внутри теории */
+        .formula-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; padding: 15px 0; }
+        .formula-card { background: #fdfdfd; border: 1px solid #e0e6ed; padding: 15px; border-radius: 8px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+        .formula-card h4 { color: #3498db; margin-top: 0; border-bottom: 1px dashed #eee; padding-bottom: 5px; font-size: 1em; }
+        .formula-math { font-size: 1.2em; margin: 10px 0; color: #e67e22; }
+        .formula-desc { font-size: 0.8em; color: #7f8c8d; margin: 0; line-height: 1.3; }
+    </style>
 </head>
 <body>
 
@@ -61,6 +90,7 @@
                     <li><a href="#about">О школе</a></li>
                     <li><a href="#reviews">Отзывы</a></li>
                     <li><a href="#contact">Контакты</a></li>
+                    <li><a href="#" onclick="handleTheoryClick(event)" style="color: #8e44ad; font-weight: bold;">Теория 📚</a></li>
                     <li><button id="auth-btn" class="auth-nav-btn">Войти</button></li>
                 </ul>
             </nav>
@@ -325,6 +355,9 @@
         <section id="contact" class="contact">
             <div class="container">
                 <h2>Запишитесь на пробный урок</h2>
+                <p id="theory-promo-msg" style="color: #e67e22; font-weight: bold; display: none; margin-bottom: 20px; font-size: 1.1em;">
+    ⚠️ Чтобы получить доступ к теории, сначала запишитесь на урок или напишите преподавателю!
+</p>
                 <p>Заполните форму, и я свяжусь с вами в течение 2 часов.</p>
                 
                 <form id="lesson-form" class="booking-form">
@@ -426,10 +459,11 @@
 
                     <div id="student-notification-area"></div>
 
-                    <div class="service-card highlight" style="text-align: left; border-top-color: #9b59b6;">
-                        <h3 style="color: #8e44ad;"><span style="font-size: 1.2em;">📚</span> База знаний (Теория)</h3>
-                        <div id="student-theory-content">
-                            </div>
+                    <div id="student-notification-area"></div>
+
+                    <div id="theory-section-anchor" class="service-card highlight" style="text-align: left; border-top-color: #9b59b6;">
+                        <h3 style="color: #8e44ad;">📚 База знаний (Теория)</h3>
+                            <div id="student-theory-content"></div>
                     </div>
                     
                     <div class="service-card highlight" style="text-align: left;">

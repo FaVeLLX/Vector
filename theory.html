@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Шпаргалка: Площади фигур | Vector School</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #f4f7f6;
+            color: #2c3e50;
+            margin: 0;
+            padding: 40px 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            border-top: 8px solid #f39c12;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 20px;
+        }
+        .header h1 {
+            color: #2c3e50;
+            font-size: 2.5em;
+            margin: 0 0 10px 0;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        .header p {
+            color: #7f8c8d;
+            font-size: 1.1em;
+            margin: 0;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        .card {
+            background: #fdfdfd;
+            border: 1px solid #e0e6ed;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            transition: 0.3s;
+        }
+        .card:hover {
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            transform: translateY(-3px);
+            border-color: #3498db;
+        }
+        .card h3 {
+            color: #3498db;
+            margin-top: 0;
+            border-bottom: 1px dashed #eee;
+            padding-bottom: 10px;
+        }
+        .formula {
+            font-size: 1.3em;
+            margin: 15px 0;
+            color: #e67e22;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 2px solid #eee;
+            color: #95a5a6;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <h1>VECTOR SCHOOL</h1>
+            <p>Справочные материалы: Площади геометрических фигур</p>
+        </div>
+
+        <div class="grid">
+            <div class="card">
+                <h3>Треугольник (через высоту)</h3>
+                <div class="formula">\[ S = \frac{1}{2} \cdot a \cdot h_a \]</div>
+                <p style="font-size: 0.85em; color: #7f8c8d;">$a$ — основание, $h_a$ — высота</p>
+            </div>
+
+            <div class="card">
+                <h3>Треугольник (через синус)</h3>
+                <div class="formula">\[ S = \frac{1}{2} \cdot a \cdot c \cdot \sin\alpha \]</div>
+                <p style="font-size: 0.85em; color: #7f8c8d;">Две стороны и угол между ними</p>
+            </div>
+
+            <div class="card">
+                <h3>Прямоугольный треугольник</h3>
+                <div class="formula">\[ S = \frac{a \cdot b}{2} \]</div>
+                <p style="font-size: 0.85em; color: #7f8c8d;">Половина произведения катетов</p>
+            </div>
+
+            <div class="card">
+                <h3>Квадрат</h3>
+                <div class="formula">\[ S = a^2 \]</div>
+                <p style="font-size: 0.85em; color: #7f8c8d;">$a$ — сторона квадрата</p>
+            </div>
+
+            <div class="card">
+                <h3>Прямоугольник</h3>
+                <div class="formula">\[ S = a \cdot b \]</div>
+                <p style="font-size: 0.85em; color: #7f8c8d;">Произведение смежных сторон</p>
+            </div>
+
+            <div class="card">
+                <h3>Параллелограмм</h3>
+                <div class="formula">\[ S = a \cdot h_a \]</div>
+                <p style="font-size: 0.85em; color: #7f8c8d;">Основание на высоту</p>
+            </div>
+
+            <div class="card">
+                <h3>Ромб</h3>
+                <div class="formula">\[ S = \frac{d_1 \cdot d_2}{2} \]</div>
+                <p style="font-size: 0.85em; color: #7f8c8d;">Половина произведения диагоналей</p>
+            </div>
+
+            <div class="card">
+                <h3>Трапеция</h3>
+                <div class="formula">\[ S = \frac{a + b}{2} \cdot h \]</div>
+                <p style="font-size: 0.85em; color: #7f8c8d;">Полусумма оснований на высоту</p>
+            </div>
+            
+            <div class="card">
+                <h3>Любой многоугольник</h3>
+                <div class="formula">\[ S = p \cdot r \]</div>
+                <p style="font-size: 0.85em; color: #7f8c8d;">Где $p$ — полупериметр, $r$ — радиус вписанной окружности</p>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Шпаргалка подготовлена для учеников Vector School. Копирование без разрешения запрещено.</p>
+        </div>
+    </div>
+
+</body>
+</html>
