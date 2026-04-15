@@ -331,13 +331,10 @@
             <h3 style="text-align:center; margin-bottom:20px; color: #2c3e50;">Урок для ученика</h3>
             <form id="set-lesson-form">
                 <input type="hidden" id="lesson-user-id">
-                
                 <input type="text" id="lesson-topic" placeholder="Тема урока (напр. Геометрия)" required class="form-input" style="margin-bottom:15px;">
                 <input type="text" id="lesson-time" placeholder="Время (напр. Завтра в 16:00)" required class="form-input" style="margin-bottom:15px;">
                 <input type="url" id="lesson-zoom" placeholder="Ссылка на конференцию" required class="form-input" style="margin-bottom:15px;">
-                
                 <textarea id="lesson-hw" placeholder="Домашнее задание (можно добавить позже)..." class="form-textarea" style="margin-bottom:20px; min-height: 60px;"></textarea>
-                
                 <button type="submit" id="lesson-submit-btn" class="submit-btn">Сохранить</button>
             </form>
         </div>
@@ -368,7 +365,6 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // Глобальный кэш учеников
         window.studentsCache = {};
 
         const authModal = document.getElementById("auth-modal");
@@ -491,10 +487,17 @@
                 time: document.getElementById('lesson-time').value,
                 zoom: document.getElementById('lesson-zoom').value,
                 homework: document.getElementById('lesson-hw').value
+                // Мы специально не перезаписываем studentAnswer, если он там был!
             };
 
             try {
-                await updateDoc(doc(db, "users", userId), { lesson: lessonData });
+                // Используем точечную нотацию для обновления отдельных полей, чтобы не стереть ответ ученика, если он был
+                await updateDoc(doc(db, "users", userId), { 
+                    "lesson.topic": lessonData.topic,
+                    "lesson.time": lessonData.time,
+                    "lesson.zoom": lessonData.zoom,
+                    "lesson.homework": lessonData.homework
+                });
                 lessonModal.style.display = "none";
                 setLessonForm.reset();
                 loadStudents(); 
@@ -506,6 +509,24 @@
                 btn.disabled = false; btn.innerText = "Сохранить";
             }
         };
+
+        // === НОВАЯ ФУНКЦИЯ ДЛЯ УЧЕНИКА: ОТПРАВКА ДОМАШКИ ===
+        window.submitHomework = async function(userId) {
+            const answerBox = document.getElementById('student-hw-answer');
+            const answer = answerBox.value.trim();
+            
+            if (!answer) return alert("Напиши ответ или вставь ссылку перед отправкой!");
+
+            try {
+                // Обновляем только поле studentAnswer внутри объекта lesson
+                await updateDoc(doc(db, "users", userId), { "lesson.studentAnswer": answer });
+                alert("Отлично! Твоя домашка отправлена учителю на проверку.");
+                window.location.reload(); // Перезагружаем страницу, чтобы обновить интерфейс
+            } catch (e) {
+                console.error(e);
+                alert("Ошибка отправки. Убедись, что ты авторизован.");
+            }
+        }
 
         async function loadStudents() {
             const list = document.getElementById('students-list');
@@ -520,6 +541,16 @@
                     if(user.role === 'student') {
                         window.studentsCache[userId] = user.lesson || {};
 
+                        // Выводим ответ ученика, если он есть
+                        let hwAnswerHtml = '';
+                        if (user.lesson && user.lesson.studentAnswer) {
+                            hwAnswerHtml = `
+                                <div style="margin-top: 10px; padding: 8px; background: #e8f8f5; border-left: 3px solid #2ecc71; font-size: 0.85em;">
+                                    <strong>Ответ на ДЗ:</strong> <span style="word-break: break-all;">${user.lesson.studentAnswer}</span>
+                                </div>
+                            `;
+                        }
+
                         const row = `
                             <tr>
                                 <td><strong>${user.name}</strong></td>
@@ -533,10 +564,11 @@
                                     </div>
                                 </td>
                                 <td>
-                                    <div style="display: flex; gap: 5px;">
+                                    <div style="display: flex; gap: 5px; flex-wrap: wrap;">
                                         <button class="action-btn" onclick="updateProgress('${userId}', ${user.progress})">Изменить %</button>
                                         <button class="action-btn" style="background-color: #f39c12;" onclick="openLessonModal('${userId}')">Задать урок</button>
                                     </div>
+                                    ${hwAnswerHtml}
                                 </td>
                             </tr>
                         `;
@@ -579,14 +611,32 @@
                             if (userData.lesson) {
                                 const hwText = userData.lesson.homework ? userData.lesson.homework : "<i>Появится после урока</i>";
                                 
+                                // Блок с формой отправки домашки для ученика
+                                let studentActionHtml = '';
+                                if (userData.lesson.studentAnswer) {
+                                    studentActionHtml = `
+                                        <div style="background: #e8f8f5; padding: 15px; border-radius: 5px; margin-top: 15px;">
+                                            <p style="margin:0; color: #27ae60;"><strong>✅ Твой ответ отправлен на проверку:</strong><br><span style="word-break: break-all;">${userData.lesson.studentAnswer}</span></p>
+                                        </div>
+                                    `;
+                                } else {
+                                    studentActionHtml = `
+                                        <div style="margin-top: 15px; text-align: center;">
+                                            <textarea id="student-hw-answer" placeholder="Напиши решение или вставь ссылку на скриншот (prnt.sc/твой_скрин)..." class="form-textarea" style="min-height: 60px; margin-bottom: 10px; width: 100%; box-sizing: border-box;"></textarea>
+                                            <button onclick="submitHomework('${user.uid}')" class="action-btn" style="background-color: #2ecc71; padding: 10px 20px; font-size: 1em;">Отправить домашку</button>
+                                        </div>
+                                    `;
+                                }
+                                
                                 lessonContentBox.innerHTML = `
                                     <p style="margin-bottom: 5px; color: #34495e;"><strong>Тема:</strong> ${userData.lesson.topic}</p>
                                     <p style="margin-bottom: 5px; color: #34495e;"><strong>Время:</strong> ${userData.lesson.time}</p>
-                                    <div style="background: #fdf2e9; padding: 10px; border-left: 3px solid #f39c12; margin: 15px 0;">
-                                        <p style="margin: 0; font-size: 0.9em; color: #e67e22;"><strong>Домашнее задание:</strong><br>${hwText}</p>
-                                    </div>
-                                    <div style="text-align: center;">
+                                    <div style="text-align: center; margin-top: 15px;">
                                         <a href="${userData.lesson.zoom}" target="_blank" class="action-btn" style="display: inline-block; padding: 10px 20px; text-decoration: none; font-size: 1em;">Подключиться к конференции</a>
+                                    </div>
+                                    <div style="background: #fdf2e9; padding: 15px; border-left: 3px solid #f39c12; margin-top: 20px;">
+                                        <p style="margin: 0; font-size: 0.9em; color: #e67e22;"><strong>Домашнее задание:</strong><br>${hwText}</p>
+                                        ${studentActionHtml}
                                     </div>
                                 `;
                             }
