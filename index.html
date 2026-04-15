@@ -11,6 +11,41 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" href="style.css">
+    
+    <style>
+        /* Анимация пульсации для уведомлений */
+        @keyframes pulse-red {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(231, 76, 60, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(231, 76, 60, 0); }
+        }
+        .badge-new {
+            background-color: #e74c3c;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: bold;
+            display: inline-block;
+            animation: pulse-red 2s infinite;
+            margin-left: 10px;
+        }
+        .badge-clear-btn {
+            background: none;
+            border: 1px solid #e74c3c;
+            color: #e74c3c;
+            padding: 2px 8px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.8em;
+            margin-left: 10px;
+            transition: 0.3s;
+        }
+        .badge-clear-btn:hover {
+            background: #e74c3c;
+            color: white;
+        }
+    </style>
 </head>
 <body>
 
@@ -55,66 +90,161 @@
                 <div id="math" class="tab-content" style="display: block;">
                     <h3 class="category-title">📚 Школьная программа</h3>
                     <div class="services-grid">
-                        <div class="service-card"><div class="card-icon">🧮</div><h3>1-4 класс</h3><p>Помощь с домашними заданиями, освоение основ арифметики, развитие логического мышления.</p></div>
-                        <div class="service-card"><div class="card-icon">📐</div><h3>5-9 класс</h3><p>Устранение пробелов, закрепление программы по алгебре и геометрии, повышение успеваемости.</p></div>
-                        <div class="service-card"><div class="card-icon">📈</div><h3>10-11 класс</h3><p>Углубленное изучение алгебры, геометрии и начал анализа. Подготовка к контрольным.</p></div>
+                        <div class="service-card">
+                            <div class="card-icon">🧮</div>
+                            <h3>1-4 класс</h3>
+                            <p>Помощь с домашними заданиями, освоение основ арифметики, развитие логического мышления.</p>
+                        </div>
+                        <div class="service-card">
+                            <div class="card-icon">📐</div>
+                            <h3>5-9 класс</h3>
+                            <p>Устранение пробелов, закрепление программы по алгебре и геометрии, повышение успеваемости.</p>
+                        </div>
+                        <div class="service-card">
+                            <div class="card-icon">📈</div>
+                            <h3>10-11 класс</h3>
+                            <p>Углубленное изучение алгебры, геометрии и начал анализа. Подготовка к контрольным.</p>
+                        </div>
                     </div>
                     <h3 class="category-title">🎓 Экзамены</h3>
                     <div class="services-grid">
-                        <div class="service-card highlight"><div class="card-icon">🔥</div><h3>ОГЭ (9 класс)</h3><p>Системная подготовка: разбираем все типы заданий, учимся решать быстро и без ошибок.</p></div>
-                        <div class="service-card highlight"><div class="card-icon">🚀</div><h3>ЕГЭ (11 класс)</h3><p>Базовый и профильный уровни. Стратегия решения сложных задач второй части.</p></div>
-                         <div class="service-card highlight"><div class="card-icon">🏛️</div><h3>Вступительные</h3><p>Интенсивная подготовка к ДВИ и олимпиадам. Разбор задач повышенной сложности.</p></div>
+                        <div class="service-card highlight">
+                            <div class="card-icon">🔥</div>
+                            <h3>ОГЭ (9 класс)</h3>
+                            <p>Системная подготовка: разбираем все типы заданий, учимся решать быстро и без ошибок.</p>
+                        </div>
+                        <div class="service-card highlight">
+                            <div class="card-icon">🚀</div>
+                            <h3>ЕГЭ (11 класс)</h3>
+                            <p>Базовый и профильный уровни. Стратегия решения сложных задач второй части.</p>
+                        </div>
+                         <div class="service-card highlight">
+                            <div class="card-icon">🏛️</div>
+                            <h3>Вступительные</h3>
+                            <p>Интенсивная подготовка к ДВИ и олимпиадам. Разбор задач повышенной сложности.</p>
+                        </div>
                     </div>
                 </div>
 
                 <div id="rus" class="tab-content" style="display: none;">
                     <h3 class="category-title">📚 Школьная программа</h3>
                     <div class="services-grid">
-                        <div class="service-card"><div class="card-icon">📝</div><h3>1-4 класс</h3><p>Основы грамотности, постановка руки, словарные слова и развитие речи.</p></div>
-                        <div class="service-card"><div class="card-icon">✒️</div><h3>5-9 класс</h3><p>Устранение пробелов в орфографии и пунктуации. Разборы сложных предложений и частей речи.</p></div>
-                         <div class="service-card"><div class="card-icon">🗣️</div><h3>9-11 класс</h3><p>Углубленная работа с текстом, подготовка к итоговому сочинению и сложным темам старшей школы.</p></div>
+                        <div class="service-card">
+                            <div class="card-icon">📝</div>
+                            <h3>1-4 класс</h3>
+                            <p>Основы грамотности, постановка руки, словарные слова и развитие речи.</p>
+                        </div>
+                        <div class="service-card">
+                            <div class="card-icon">✒️</div>
+                            <h3>5-9 класс</h3>
+                            <p>Устранение пробелов в орфографии и пунктуации. Разборы сложных предложений и частей речи.</p>
+                        </div>
+                         <div class="service-card">
+                            <div class="card-icon">🗣️</div>
+                            <h3>9-11 класс</h3>
+                            <p>Углубленная работа с текстом, подготовка к итоговому сочинению и сложным темам старшей школы.</p>
+                        </div>
                     </div>
                     <div style="margin-top: 40px;"></div>
                     <h3 class="category-title">🎓 Экзамены</h3>
                     <div class="services-grid">
-                        <div class="service-card highlight"><div class="card-icon">🔥</div><h3>ОГЭ (9 класс)</h3><p>Подготовка к тестовой части, написание сжатого изложения и сочинения по критериям.</p></div>
-                        <div class="service-card highlight"><div class="card-icon">🚀</div><h3>ЕГЭ (11 класс)</h3><p>Идеальное решение теста и сочинение на максимум. Клише, аргументация и поиск проблемы.</p></div>
-                         <div class="service-card highlight"><div class="card-icon">🏛️</div><h3>Вступительные</h3><p>Подготовка к внутренним экзаменам в ВУЗы и олимпиадам по русскому языку.</p></div>
+                        <div class="service-card highlight">
+                            <div class="card-icon">🔥</div>
+                            <h3>ОГЭ (9 класс)</h3>
+                            <p>Подготовка к тестовой части, написание сжатого изложения и сочинения по критериям.</p>
+                        </div>
+                        <div class="service-card highlight">
+                            <div class="card-icon">🚀</div>
+                            <h3>ЕГЭ (11 класс)</h3>
+                            <p>Идеальное решение теста и сочинение на максимум. Клише, аргументация и поиск проблемы.</p>
+                        </div>
+                         <div class="service-card highlight">
+                            <div class="card-icon">🏛️</div>
+                            <h3>Вступительные</h3>
+                            <p>Подготовка к внутренним экзаменам в ВУЗы и олимпиадам по русскому языку.</p>
+                        </div>
                     </div>
                 </div>
 
                 <div id="inf" class="tab-content" style="display: none;">
                     <h3 class="category-title">💻 Программирование и база</h3>
                     <div class="services-grid">
-                        <div class="service-card"><div class="card-icon">🐍</div><h3>Python с нуля</h3><p>Самый популярный язык для старта. Изучаем синтаксис, пишем первые программы и игры.</p></div>
-                        <div class="service-card"><div class="card-icon">🖥️</div><h3>Школьная программа</h3><p>Помощь с домашними заданиями: системы счисления, логика, алгоритмы, работа в Excel/Word.</p></div>
-                        <div class="service-card"><div class="card-icon">👾</div><h3>Алгоритмы</h3><p>Развитие алгоритмического мышления. Учимся строить блок-схемы и решать олимпиадные задачи.</p></div>
+                        <div class="service-card">
+                            <div class="card-icon">🐍</div>
+                            <h3>Python с нуля</h3>
+                            <p>Самый популярный язык для старта. Изучаем синтаксис, пишем первые программы и игры.</p>
+                        </div>
+                        <div class="service-card">
+                            <div class="card-icon">🖥️</div>
+                            <h3>Школьная программа</h3>
+                            <p>Помощь с домашними заданиями: системы счисления, логика, алгоритмы, работа в Excel/Word.</p>
+                        </div>
+                        <div class="service-card">
+                            <div class="card-icon">👾</div>
+                            <h3>Алгоритмы</h3>
+                            <p>Развитие алгоритмического мышления. Учимся строить блок-схемы и решать олимпиадные задачи.</p>
+                        </div>
                     </div>
                     <div style="margin-top: 40px;"></div>
                     <h3 class="category-title">🎓 Экзамены</h3>
                     <div class="services-grid">
-                        <div class="service-card highlight"><div class="card-icon">🔥</div><h3>ОГЭ (9 класс)</h3><p>Разбор всех заданий: от простых вычислений до программирования и работы с таблицами.</p></div>
-                        <div class="service-card highlight"><div class="card-icon">🚀</div><h3>ЕГЭ (11 класс)</h3><p>Подготовка на высокий балл. Решение задач на программирование (24-27) и теорию игр.</p></div>
-                         <div class="service-card highlight"><div class="card-icon">🏛️</div><h3>Вступительные</h3><p>Подготовка к экзаменам в технические ВУЗы и профильные лицеи.</p></div>
+                        <div class="service-card highlight">
+                            <div class="card-icon">🔥</div>
+                            <h3>ОГЭ (9 класс)</h3>
+                            <p>Разбор всех заданий: от простых вычислений до программирования и работы с таблицами.</p>
+                        </div>
+                        <div class="service-card highlight">
+                            <div class="card-icon">🚀</div>
+                            <h3>ЕГЭ (11 класс)</h3>
+                            <p>Подготовка на высокий балл. Решение задач на программирование (24-27) и теорию игр.</p>
+                        </div>
+                         <div class="service-card highlight">
+                            <div class="card-icon">🏛️</div>
+                            <h3>Вступительные</h3>
+                            <p>Подготовка к экзаменам в технические ВУЗы и профильные лицеи.</p>
+                        </div>
                     </div>
                 </div>
 
                 <div id="chem" class="tab-content" style="display: none;">
                     <h3 class="category-title">⚗️ Школьная программа</h3>
                     <div class="services-grid">
-                        <div class="service-card"><div class="card-icon">💧</div><h3>8-9 класс</h3><p>Неорганическая химия с нуля. Таблица Менделеева, типы реакций, решение расчетных задач.</p></div>
-                        <div class="service-card"><div class="card-icon">🧬</div><h3>10 класс (Органика)</h3><p>Органическая химия: углеводороды, спирты, кислоты. Понятное объяснение цепочек реакций.</p></div>
-                        <div class="service-card"><div class="card-icon">🔬</div><h3>11 класс (Общая)</h3><p>Углубление в общую химию. Строение атома, скорость реакций, подготовка к контрольным.</p></div>
+                        <div class="service-card">
+                            <div class="card-icon">💧</div>
+                            <h3>8-9 класс</h3>
+                            <p>Неорганическая химия с нуля. Таблица Менделеева, типы реакций, решение расчетных задач.</p>
+                        </div>
+                        <div class="service-card">
+                            <div class="card-icon">🧬</div>
+                            <h3>10 класс (Органика)</h3>
+                            <p>Органическая химия: углеводороды, спирты, кислоты. Понятное объяснение цепочек реакций.</p>
+                        </div>
+                        <div class="service-card">
+                            <div class="card-icon">🔬</div>
+                            <h3>11 класс (Общая)</h3>
+                            <p>Углубление в общую химию. Строение атома, скорость реакций, подготовка к контрольным.</p>
+                        </div>
                     </div>
                     <div style="margin-top: 40px;"></div>
                     <h3 class="category-title">🎓 Экзамены</h3>
                     <div class="services-grid">
-                        <div class="service-card highlight"><div class="card-icon">🔥</div><h3>ОГЭ (9 класс)</h3><p>Разбор реального эксперимента, решение задач на массовые доли и уравнения реакций.</p></div>
-                        <div class="service-card highlight"><div class="card-icon">🚀</div><h3>ЕГЭ (11 класс)</h3><p>Подготовка в мед и химфак. Сложнейшие задачи (34), ОВР и гидролиз. Стратегия на 90+.</p></div>
-                         <div class="service-card highlight"><div class="card-icon">🏛️</div><h3>ДВИ и Олимпиады</h3><p>Подготовка к ДВИ в МГУ и перечневым олимпиадам. Химия профильного уровня.</p></div>
+                        <div class="service-card highlight">
+                            <div class="card-icon">🔥</div>
+                            <h3>ОГЭ (9 класс)</h3>
+                            <p>Разбор реального эксперимента, решение задач на массовые доли и уравнения реакций.</p>
+                        </div>
+                        <div class="service-card highlight">
+                            <div class="card-icon">🚀</div>
+                            <h3>ЕГЭ (11 класс)</h3>
+                            <p>Подготовка в мед и химфак. Сложнейшие задачи (34), ОВР и гидролиз. Стратегия на 90+.</p>
+                        </div>
+                         <div class="service-card highlight">
+                            <div class="card-icon">🏛️</div>
+                            <h3>ДВИ и Олимпиады</h3>
+                            <p>Подготовка к ДВИ в МГУ и перечневым олимпиадам. Химия профильного уровня.</p>
+                        </div>
                     </div>
                 </div>
-
             </div>
         </section>
         
@@ -262,8 +392,7 @@
                         <table class="admin-table">
                             <thead>
                                 <tr>
-                                    <th>Имя</th>
-                                    <th>Email</th>
+                                    <th>Имя / Email</th>
                                     <th>Прогресс</th>
                                     <th>Действия</th>
                                 </tr>
@@ -284,23 +413,29 @@
                     <h2 id="lk-welcome" style="margin-bottom: 0;">Привет! 🚀</h2>
                     <button onclick="logout()" class="logout-btn">Выйти</button>
                 </div>
-                <div class="services-grid">
-                    <div class="service-card">
-                        <h3>Твой прогресс</h3>
+                
+                <div class="services-grid" style="grid-template-columns: 1fr;">
+                    
+                    <div class="service-card" style="text-align: left;">
+                        <h3 style="margin-bottom: 10px;">Твой прогресс</h3>
                         <div style="background: #eee; width: 100%; height: 12px; border-radius: 6px; margin: 15px 0;">
                             <div id="student-progress-fill" style="background: #2ecc71; width: 0%; height: 100%; border-radius: 6px; transition: width 1s ease-in-out;"></div>
                         </div>
                         <p id="student-progress-text" style="font-weight: bold; color: #2c3e50;">Пройдено: 0%</p>
                     </div>
+
+                    <div id="student-notification-area"></div>
+
+                    <div class="service-card highlight" style="text-align: left; border-top-color: #9b59b6;">
+                        <h3 style="color: #8e44ad;"><span style="font-size: 1.2em;">📚</span> База знаний (Теория)</h3>
+                        <div id="student-theory-content">
+                            </div>
+                    </div>
                     
                     <div class="service-card highlight" style="text-align: left;">
-                        <h3 style="text-align: center;">Твои занятия</h3>
+                        <h3>🗓 Твои занятия</h3>
                         <div id="student-lesson-content">
-                            <p style="text-align: center;">Свяжись с учителем для получения материалов и ссылки на конференцию.</p>
-                            <div style="text-align: center;">
-                                <a href="https://t.me/VectorSchoolSupp" target="_blank" class="action-btn" style="display: inline-block; margin-top: 10px; text-decoration: none;">Написать учителю</a>
                             </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -328,14 +463,14 @@
     <div id="lesson-modal" class="modal">
         <div class="modal-content">
             <span class="close-modal" id="close-lesson-modal">&times;</span>
-            <h3 style="text-align:center; margin-bottom:20px; color: #2c3e50;">Урок для ученика</h3>
+            <h3 style="text-align:center; margin-bottom:20px; color: #2c3e50;">Новый урок для ученика</h3>
             <form id="set-lesson-form">
                 <input type="hidden" id="lesson-user-id">
                 <input type="text" id="lesson-topic" placeholder="Тема урока (напр. Геометрия)" required class="form-input" style="margin-bottom:15px;">
                 <input type="text" id="lesson-time" placeholder="Время (напр. Завтра в 16:00)" required class="form-input" style="margin-bottom:15px;">
                 <input type="url" id="lesson-zoom" placeholder="Ссылка на конференцию" required class="form-input" style="margin-bottom:15px;">
-                <textarea id="lesson-hw" placeholder="Домашнее задание (можно добавить позже)..." class="form-textarea" style="margin-bottom:20px; min-height: 60px;"></textarea>
-                <button type="submit" id="lesson-submit-btn" class="submit-btn">Сохранить</button>
+                <textarea id="lesson-hw" placeholder="Домашнее задание (можно вставить ссылки на Яндекс.Диск, скриншоты)..." class="form-textarea" style="margin-bottom:20px; min-height: 60px;"></textarea>
+                <button type="submit" id="lesson-submit-btn" class="submit-btn">Добавить в историю</button>
             </form>
         </div>
     </div>
@@ -365,8 +500,6 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        window.studentsCache = {};
-
         const authModal = document.getElementById("auth-modal");
         const authBtn = document.getElementById("auth-btn");
         const closeAuthBtn = document.getElementById("close-auth-modal");
@@ -391,16 +524,30 @@
             document.getElementById('auth-submit-btn').innerText = isLoginMode ? 'Войти' : 'Зарегистрироваться';
             document.getElementById('auth-name').style.display = isLoginMode ? 'none' : 'block';
             document.getElementById('auth-name').required = !isLoginMode;
-            authError.innerText = '';
+            document.getElementById('auth-error').innerText = '';
         }
 
-        authBtn.onclick = () => { if (!auth.currentUser) authModal.style.display = "block"; };
-        closeAuthBtn.onclick = () => authModal.style.display = "none";
-        closeLessonBtn.onclick = () => lessonModal.style.display = "none";
-        
+        authBtn.onclick = () => { 
+            if (!auth.currentUser) {
+                authModal.style.display = "block"; 
+            }
+        };
+
+        closeAuthBtn.onclick = () => {
+            authModal.style.display = "none";
+        };
+
+        closeLessonBtn.onclick = () => {
+            lessonModal.style.display = "none";
+        };
+
         window.onclick = (e) => { 
-            if (e.target == authModal) authModal.style.display = "none"; 
-            if (e.target == lessonModal) lessonModal.style.display = "none"; 
+            if (e.target == authModal) {
+                authModal.style.display = "none"; 
+            }
+            if (e.target == lessonModal) {
+                lessonModal.style.display = "none"; 
+            }
         };
 
         authForm.onsubmit = async (e) => {
@@ -410,8 +557,7 @@
             const name = document.getElementById('auth-name').value;
             const submitBtn = document.getElementById('auth-submit-btn');
             
-            authError.innerText = '';
-            submitBtn.disabled = true;
+            submitBtn.disabled = true; 
             submitBtn.innerText = 'Загрузка...';
 
             try {
@@ -420,8 +566,17 @@
                 } else {
                     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
                     const user = userCredential.user;
+                    
                     await setDoc(doc(db, "users", user.uid), {
-                        name: name, email: email, role: "student", progress: 0, registeredAt: new Date().toISOString()
+                        name: name, 
+                        email: email, 
+                        role: "student", 
+                        progress: 0, 
+                        theoryAccess: false, 
+                        lessons: [], 
+                        hasNewLesson: false, 
+                        hasNewHomework: false,
+                        registeredAt: new Date().toISOString()
                     });
 
                     const tgToken = '8340993627:AAEu7ax6CSN643NTi-mwerzSzGV1I8Gt42U';
@@ -429,222 +584,324 @@
                     const tgMessage = `🚀 *НОВАЯ РЕГИСТРАЦИЯ!*\n👤 *Имя:* ${name}\n📧 *Email:* ${email}`;
                     
                     fetch(`https://api.telegram.org/bot${tgToken}/sendMessage`, {
-                        method: 'POST',
+                        method: 'POST', 
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ chat_id: tgChat, message_thread_id: '2', text: tgMessage, parse_mode: 'Markdown' })
+                        body: JSON.stringify({ 
+                            chat_id: tgChat, 
+                            message_thread_id: '2', 
+                            text: tgMessage, 
+                            parse_mode: 'Markdown' 
+                        })
                     }).catch(err => console.error("Ошибка TG:", err));
                 }
-                authModal.style.display = "none";
+                
+                authModal.style.display = "none"; 
                 authForm.reset();
             } catch (error) {
-                if (error.code === 'auth/email-already-in-use') authError.innerText = "Email уже зарегистрирован.";
-                else if (error.code === 'auth/invalid-credential') authError.innerText = "Неверный Email или пароль.";
-                else if (error.code === 'auth/weak-password') authError.innerText = "Пароль минимум 6 символов.";
-                else authError.innerText = "Ошибка: " + error.message;
+                document.getElementById('auth-error').innerText = "Ошибка: " + error.message;
             } finally {
-                submitBtn.disabled = false;
+                submitBtn.disabled = false; 
                 submitBtn.innerText = isLoginMode ? 'Войти' : 'Зарегистрироваться';
             }
         };
 
-        window.logout = function() { signOut(auth); }
+        window.logout = function() { 
+            signOut(auth); 
+        }
 
         window.updateProgress = async function(userId, currentProgress) {
-            const newProgress = prompt(`Введите новый прогресс в % (от 0 до 100):`, currentProgress);
+            const newProgress = prompt(`Новый прогресс в %:`, currentProgress);
             if (newProgress !== null && newProgress !== "") {
                 let val = parseInt(newProgress);
-                if (isNaN(val)) return alert('Введите число!');
-                if (val < 0) val = 0; if (val > 100) val = 100;
-                try {
+                if (!isNaN(val)) {
+                    if (val < 0) val = 0; 
+                    if (val > 100) val = 100;
+                    
                     await updateDoc(doc(db, "users", userId), { progress: val });
                     loadStudents();
-                } catch (e) {
-                    console.error("Ошибка при обновлении:", e); alert('Ошибка при обновлении базы');
                 }
             }
         }
 
+        window.toggleTheory = async function(userId, currentStatus) {
+            await updateDoc(doc(db, "users", userId), { theoryAccess: !currentStatus });
+            loadStudents();
+        }
+
         window.openLessonModal = function(userId) {
             document.getElementById('lesson-user-id').value = userId;
-            const savedLesson = window.studentsCache[userId] || {};
-            
-            document.getElementById('lesson-topic').value = savedLesson.topic || '';
-            document.getElementById('lesson-time').value = savedLesson.time || '';
-            document.getElementById('lesson-zoom').value = savedLesson.zoom || '';
-            document.getElementById('lesson-hw').value = savedLesson.homework || '';
-            
+            setLessonForm.reset(); 
             lessonModal.style.display = "block";
         }
 
+        // Логика учителя: задать урок
         setLessonForm.onsubmit = async (e) => {
             e.preventDefault();
             const btn = document.getElementById('lesson-submit-btn');
-            btn.disabled = true; btn.innerText = "Отправка...";
+            
+            btn.disabled = true; 
+            btn.innerText = "Сохранение...";
 
             const userId = document.getElementById('lesson-user-id').value;
-            const lessonData = {
+            const newLesson = {
+                id: Date.now(),
                 topic: document.getElementById('lesson-topic').value,
                 time: document.getElementById('lesson-time').value,
                 zoom: document.getElementById('lesson-zoom').value,
-                homework: document.getElementById('lesson-hw').value
-                // Мы специально не перезаписываем studentAnswer, если он там был!
+                homework: document.getElementById('lesson-hw').value,
+                studentAnswer: ""
             };
 
             try {
-                // Используем точечную нотацию для обновления отдельных полей, чтобы не стереть ответ ученика, если он был
+                const userDoc = await getDoc(doc(db, "users", userId));
+                let lessons = userDoc.data().lessons || [];
+                lessons.unshift(newLesson); 
+                
                 await updateDoc(doc(db, "users", userId), { 
-                    "lesson.topic": lessonData.topic,
-                    "lesson.time": lessonData.time,
-                    "lesson.zoom": lessonData.zoom,
-                    "lesson.homework": lessonData.homework
+                    lessons: lessons,
+                    hasNewLesson: true,
+                    hasNewHomework: false 
                 });
+                
                 lessonModal.style.display = "none";
                 setLessonForm.reset();
                 loadStudents(); 
-                alert('Урок успешно сохранен!');
-            } catch (error) {
-                console.error("Ошибка добавления урока:", error);
-                alert("Ошибка сохранения.");
-            } finally {
-                btn.disabled = false; btn.innerText = "Сохранить";
+            } catch (error) { 
+                console.error(error); 
+                alert("Ошибка."); 
+            } finally { 
+                btn.disabled = false; 
+                btn.innerText = "Добавить в историю"; 
             }
         };
 
-        // === НОВАЯ ФУНКЦИЯ ДЛЯ УЧЕНИКА: ОТПРАВКА ДОМАШКИ ===
-        window.submitHomework = async function(userId) {
-            const answerBox = document.getElementById('student-hw-answer');
+        // Логика ученика: сдать домашку
+        window.submitHomework = async function(userId, lessonId) {
+            const answerBox = document.getElementById(`hw-answer-${lessonId}`);
             const answer = answerBox.value.trim();
             
-            if (!answer) return alert("Напиши ответ или вставь ссылку перед отправкой!");
+            if (!answer) {
+                return alert("Напиши ответ перед отправкой!");
+            }
 
             try {
-                // Обновляем только поле studentAnswer внутри объекта lesson
-                await updateDoc(doc(db, "users", userId), { "lesson.studentAnswer": answer });
-                alert("Отлично! Твоя домашка отправлена учителю на проверку.");
-                window.location.reload(); // Перезагружаем страницу, чтобы обновить интерфейс
-            } catch (e) {
-                console.error(e);
-                alert("Ошибка отправки. Убедись, что ты авторизован.");
+                const userDocRef = doc(db, "users", userId);
+                const userSnap = await getDoc(userDocRef);
+                let lessons = userSnap.data().lessons || [];
+                let lessonIndex = lessons.findIndex(l => l.id === lessonId);
+                
+                if(lessonIndex > -1) {
+                    lessons[lessonIndex].studentAnswer = answer;
+                    
+                    await updateDoc(userDocRef, { 
+                        lessons: lessons,
+                        hasNewHomework: true 
+                    });
+                    
+                    alert("Отлично! Домашка отправлена.");
+                    window.location.reload(); 
+                }
+            } catch (e) { 
+                console.error(e); 
             }
         }
 
+        // Функции сброса уведомлений
+        window.clearHWBadge = async function(userId) {
+            await updateDoc(doc(db, "users", userId), { hasNewHomework: false });
+            loadStudents();
+        }
+        
+        window.clearLessonBadge = async function(userId) {
+            await updateDoc(doc(db, "users", userId), { hasNewLesson: false });
+            document.getElementById('student-notification-area').innerHTML = ''; 
+        }
+
+        // Загрузка студентов для панели администратора
         async function loadStudents() {
             const list = document.getElementById('students-list');
-            list.innerHTML = '<tr><td colspan="4" style="text-align:center;">Загрузка данных из базы...</td></tr>';
+            list.innerHTML = '<tr><td colspan="3" style="text-align:center;">Загрузка...</td></tr>';
+            
             try {
                 const querySnapshot = await getDocs(collection(db, "users"));
                 list.innerHTML = '';
+                
                 querySnapshot.forEach((docSnap) => {
                     const user = docSnap.data();
                     const userId = docSnap.id;
                     
                     if(user.role === 'student') {
-                        window.studentsCache[userId] = user.lesson || {};
-
-                        // Выводим ответ ученика, если он есть
-                        let hwAnswerHtml = '';
-                        if (user.lesson && user.lesson.studentAnswer) {
-                            hwAnswerHtml = `
-                                <div style="margin-top: 10px; padding: 8px; background: #e8f8f5; border-left: 3px solid #2ecc71; font-size: 0.85em;">
-                                    <strong>Ответ на ДЗ:</strong> <span style="word-break: break-all;">${user.lesson.studentAnswer}</span>
+                        const theoryStatus = user.theoryAccess ? true : false;
+                        const theoryBtnColor = theoryStatus ? '#2ecc71' : '#95a5a6';
+                        
+                        let hwBadgeHtml = '';
+                        if (user.hasNewHomework) {
+                            hwBadgeHtml = `
+                                <div style="margin-top: 10px;">
+                                    <span class="badge-new">🔴 Новое ДЗ!</span> 
+                                    <button class="badge-clear-btn" onclick="clearHWBadge('${userId}')">Ок, проверил</button>
                                 </div>
                             `;
                         }
 
-                        const row = `
-                            <tr>
-                                <td><strong>${user.name}</strong></td>
-                                <td>${user.email}</td>
-                                <td>
-                                    <div style="display: flex; align-items: center; gap: 10px;">
-                                        <div style="background: #eee; width: 100%; height: 8px; border-radius: 4px; flex-grow: 1;">
-                                            <div style="background: #2ecc71; width: ${user.progress}%; height: 100%; border-radius: 4px;"></div>
+                        let recentAnswersHtml = '';
+                        if (user.lessons && user.lessons.length > 0) {
+                            user.lessons.slice(0, 2).forEach(lesson => {
+                                if (lesson.studentAnswer) {
+                                    recentAnswersHtml += `
+                                        <div style="margin-top: 5px; padding: 5px; background: #e8f8f5; border-left: 3px solid #2ecc71; font-size: 0.8em;">
+                                            <strong>${lesson.topic}:</strong> ${lesson.studentAnswer}
                                         </div>
-                                        <span style="font-size: 0.9em; font-weight: bold; min-width: 40px; text-align: right; color: #2c3e50;">${user.progress}%</span>
+                                    `;
+                                }
+                            });
+                        }
+
+                        list.innerHTML += `
+                            <tr>
+                                <td>
+                                    <strong>${user.name}</strong><br>
+                                    <span style="font-size:0.8em; color:#7f8c8d;">${user.email}</span>
+                                </td>
+                                <td>
+                                    <div style="background: #eee; width: 100%; height: 8px; border-radius: 4px; margin-bottom: 5px;">
+                                        <div style="background: #2ecc71; width: ${user.progress}%; height: 100%; border-radius: 4px;"></div>
                                     </div>
+                                    <span style="font-size: 0.9em; font-weight: bold;">${user.progress}%</span>
                                 </td>
                                 <td>
                                     <div style="display: flex; gap: 5px; flex-wrap: wrap;">
-                                        <button class="action-btn" onclick="updateProgress('${userId}', ${user.progress})">Изменить %</button>
-                                        <button class="action-btn" style="background-color: #f39c12;" onclick="openLessonModal('${userId}')">Задать урок</button>
+                                        <button class="action-btn" onclick="updateProgress('${userId}', ${user.progress})">%</button>
+                                        <button class="action-btn" style="background-color: #f39c12;" onclick="openLessonModal('${userId}')">Урок</button>
+                                        <button class="action-btn" style="background-color: ${theoryBtnColor};" onclick="toggleTheory('${userId}', ${theoryStatus})">Теория</button>
                                     </div>
-                                    ${hwAnswerHtml}
+                                    ${hwBadgeHtml}
+                                    ${recentAnswersHtml}
                                 </td>
                             </tr>
                         `;
-                        list.innerHTML += row;
                     }
                 });
-                if(list.innerHTML === '') {
-                   list.innerHTML = '<tr><td colspan="4" style="text-align:center;">Учеников пока нет. Ждем регистраций!</td></tr>';
-                }
-            } catch (e) {
-                console.error(e);
-                list.innerHTML = '<tr><td colspan="4" style="text-align:center; color: red;">Ошибка загрузки базы данных</td></tr>';
+            } catch (e) { 
+                console.error(e); 
             }
         }
 
+        // Проверка авторизации
         onAuthStateChanged(auth, async (user) => {
             const main = document.getElementById('main-content');
             const lk = document.getElementById('lk-container');
             const admin = document.getElementById('admin-container');
-            const btn = document.getElementById('auth-btn');
 
             if (user) {
-                btn.textContent = 'В кабинет';
+                document.getElementById('auth-btn').textContent = 'В кабинет';
                 try {
                     const docSnap = await getDoc(doc(db, "users", user.uid));
                     if (docSnap.exists()) {
                         const userData = docSnap.data();
                         
                         if (userData.role === 'admin') {
-                            main.style.display = 'none'; lk.style.display = 'none'; admin.style.display = 'block'; 
+                            main.style.display = 'none'; 
+                            lk.style.display = 'none'; 
+                            admin.style.display = 'block'; 
                             loadStudents();
                         } else {
-                            main.style.display = 'none'; admin.style.display = 'none'; lk.style.display = 'block'; 
+                            main.style.display = 'none'; 
+                            admin.style.display = 'none'; 
+                            lk.style.display = 'block'; 
                             
-                            document.getElementById('lk-welcome').innerText = `Привет, ${userData.name}! 🚀`;
                             document.getElementById('student-progress-fill').style.width = `${userData.progress}%`;
                             document.getElementById('student-progress-text').innerText = `Пройдено: ${userData.progress}%`;
 
-                            const lessonContentBox = document.getElementById('student-lesson-content');
-                            if (userData.lesson) {
-                                const hwText = userData.lesson.homework ? userData.lesson.homework : "<i>Появится после урока</i>";
-                                
-                                // Блок с формой отправки домашки для ученика
-                                let studentActionHtml = '';
-                                if (userData.lesson.studentAnswer) {
-                                    studentActionHtml = `
-                                        <div style="background: #e8f8f5; padding: 15px; border-radius: 5px; margin-top: 15px;">
-                                            <p style="margin:0; color: #27ae60;"><strong>✅ Твой ответ отправлен на проверку:</strong><br><span style="word-break: break-all;">${userData.lesson.studentAnswer}</span></p>
-                                        </div>
-                                    `;
-                                } else {
-                                    studentActionHtml = `
-                                        <div style="margin-top: 15px; text-align: center;">
-                                            <textarea id="student-hw-answer" placeholder="Напиши решение или вставь ссылку на скриншот (prnt.sc/твой_скрин)..." class="form-textarea" style="min-height: 60px; margin-bottom: 10px; width: 100%; box-sizing: border-box;"></textarea>
-                                            <button onclick="submitHomework('${user.uid}')" class="action-btn" style="background-color: #2ecc71; padding: 10px 20px; font-size: 1em;">Отправить домашку</button>
-                                        </div>
-                                    `;
-                                }
-                                
-                                lessonContentBox.innerHTML = `
-                                    <p style="margin-bottom: 5px; color: #34495e;"><strong>Тема:</strong> ${userData.lesson.topic}</p>
-                                    <p style="margin-bottom: 5px; color: #34495e;"><strong>Время:</strong> ${userData.lesson.time}</p>
-                                    <div style="text-align: center; margin-top: 15px;">
-                                        <a href="${userData.lesson.zoom}" target="_blank" class="action-btn" style="display: inline-block; padding: 10px 20px; text-decoration: none; font-size: 1em;">Подключиться к конференции</a>
+                            // Уведомление для ученика
+                            const notifArea = document.getElementById('student-notification-area');
+                            if (userData.hasNewLesson) {
+                                notifArea.innerHTML = `
+                                    <div style="background: #fadbd8; border-left: 5px solid #e74c3c; padding: 15px; border-radius: 5px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+                                        <div style="color: #c0392b; font-weight: bold;">🔴 Преподаватель добавил новый урок!</div>
+                                        <button onclick="clearLessonBadge('${user.uid}')" class="action-btn" style="background: #c0392b;">Понятно</button>
                                     </div>
-                                    <div style="background: #fdf2e9; padding: 15px; border-left: 3px solid #f39c12; margin-top: 20px;">
-                                        <p style="margin: 0; font-size: 0.9em; color: #e67e22;"><strong>Домашнее задание:</strong><br>${hwText}</p>
-                                        ${studentActionHtml}
+                                `;
+                            } else {
+                                notifArea.innerHTML = '';
+                            }
+
+                            // Теория
+                            const theoryBox = document.getElementById('student-theory-content');
+                            if (userData.theoryAccess) {
+                                theoryBox.innerHTML = `
+                                    <p style="color: #27ae60; font-weight: bold; margin-bottom: 15px;">Доступ открыт! Твои справочные материалы:</p>
+                                    <div style="text-align: center; margin-bottom: 20px;">
+                                        <p style="color: #2c3e50; font-weight: bold; margin-bottom: 10px;">Шпаргалка: Свойства треугольников</p>
+                                        <img src="ВСТАВЬ_ССЫЛКУ_ИЗ_IMGBB_СЮДА" alt="Свойства треугольников" style="max-width: 100%; border-radius: 8px; border: 1px solid #ddd; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+                                    </div>
+                                `;
+                            } else {
+                                theoryBox.innerHTML = `
+                                    <div style="text-align: center; padding: 20px; background: #f9f9f9; border-radius: 8px;">
+                                        <div style="font-size: 3em; margin-bottom: 10px;">🔒</div>
+                                        <p style="color: #7f8c8d; margin-bottom: 15px;">Эта закрытая база знаний доступна только активным ученикам.</p>
+                                    </div>
+                                `;
+                            }
+
+                            // Уроки
+                            const lessonContentBox = document.getElementById('student-lesson-content');
+                            const lessonsArray = userData.lessons || [];
+                            
+                            if (lessonsArray.length > 0) {
+                                let htmlString = '';
+                                lessonsArray.forEach((lesson, index) => {
+                                    const bgStyle = index === 0 ? 'background: #fff; border: 2px solid #3498db;' : 'background: #fdfdfd; border: 1px solid #eee; opacity: 0.9;';
+                                    
+                                    let studentActionHtml = '';
+                                    if (lesson.studentAnswer) {
+                                        studentActionHtml = `
+                                            <div style="background: #e8f8f5; padding: 10px; border-radius: 5px; margin-top: 10px;">
+                                                <p style="margin:0; color: #27ae60; font-size: 0.9em;"><strong>✅ ДЗ сдано:</strong> ${lesson.studentAnswer}</p>
+                                            </div>
+                                        `;
+                                    } else {
+                                        studentActionHtml = `
+                                            <div style="margin-top: 10px;">
+                                                <input type="text" id="hw-answer-${lesson.id}" placeholder="Ссылка на скрин или текст" class="form-input" style="padding: 8px; font-size: 0.9em; margin-bottom: 5px;">
+                                                <button onclick="submitHomework('${user.uid}', ${lesson.id})" class="action-btn" style="background-color: #2ecc71; padding: 6px 12px; font-size: 0.85em;">Сдать</button>
+                                            </div>
+                                        `;
+                                    }
+
+                                    htmlString += `
+                                        <div style="padding: 20px; border-radius: 8px; margin-bottom: 20px; ${bgStyle}">
+                                            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 10px;">
+                                                <h4 style="margin: 0; color: #2c3e50;">${lesson.topic}</h4>
+                                                <span style="background: #ecf0f1; padding: 3px 8px; border-radius: 12px; font-size: 0.8em; font-weight: bold;">${lesson.time}</span>
+                                            </div>
+                                            <a href="${lesson.zoom}" target="_blank" class="action-btn" style="display: inline-block; padding: 8px 15px; margin-bottom: 15px; text-decoration: none;">📹 Подключиться</a>
+                                            <div style="background: #fdf2e9; padding: 12px; border-left: 3px solid #f39c12;">
+                                                <p style="margin: 0; font-size: 0.9em; color: #e67e22;"><strong>Домашнее задание:</strong><br>${lesson.homework || "<i>Позже</i>"}</p>
+                                                ${studentActionHtml}
+                                            </div>
+                                        </div>
+                                    `;
+                                });
+                                lessonContentBox.innerHTML = htmlString;
+                            } else {
+                                lessonContentBox.innerHTML = `
+                                    <div style="text-align: center; padding: 30px; border: 2px dashed #bdc3c7; border-radius: 8px;">
+                                        <p style="color: #7f8c8d;">Уроков пока нет.</p>
                                     </div>
                                 `;
                             }
                         }
                     }
-                } catch (e) { console.error(e); }
+                } catch (e) { 
+                    console.error(e); 
+                }
             } else {
-                main.style.display = 'block'; lk.style.display = 'none'; if(admin) admin.style.display = 'none'; btn.textContent = 'Войти';
+                main.style.display = 'block'; 
+                lk.style.display = 'none'; 
+                if(admin) admin.style.display = 'none'; 
+                document.getElementById('auth-btn').textContent = 'Войти';
             }
         });
     </script>
@@ -656,9 +913,13 @@
         function openTab(evt, subjectName) {
             var i, tabcontent, tablinks;
             tabcontent = document.getElementsByClassName("tab-content");
-            for (i = 0; i < tabcontent.length; i++) tabcontent[i].style.display = "none";
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
             tablinks = document.getElementsByClassName("tab-btn");
-            for (i = 0; i < tablinks.length; i++) tablinks[i].className = tablinks[i].className.replace(" active", "");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
             document.getElementById(subjectName).style.display = "block";
             evt.currentTarget.className += " active";
         }
@@ -668,9 +929,15 @@
             const track = document.getElementById('track');
             const slides = document.getElementsByClassName('review-slide');
             const totalSlides = slides.length;
+            
             currentSlide = currentSlide + direction;
-            if (currentSlide < 0) currentSlide = totalSlides - 1;
-            if (currentSlide >= totalSlides) currentSlide = 0;
+            
+            if (currentSlide < 0) {
+                currentSlide = totalSlides - 1;
+            }
+            if (currentSlide >= totalSlides) {
+                currentSlide = 0;
+            }
             track.style.transform = `translateX(-${currentSlide * 100}%)`;
         }
 
@@ -697,6 +964,7 @@
             const formData = new FormData(this);
             const submitBtn = this.querySelector('button[type="submit"]');
             const messageDiv = document.getElementById('form-message');
+            
             submitBtn.textContent = 'Отправляем...';
             submitBtn.disabled = true;
             submitBtn.style.backgroundColor = '#e67e22';
@@ -718,7 +986,9 @@
                 if (data.ok) {
                     messageDiv.innerHTML = '<p style="color: #2ecc71;">✅ Спасибо! Заявка отправлена.</p>';
                     this.reset();
-                } else { throw new Error('Ошибка'); }
+                } else { 
+                    throw new Error('Ошибка'); 
+                }
             })
             .catch(error => {
                 messageDiv.innerHTML = '<p style="color: #e74c3c;">❌ Ошибка. Напишите в Telegram.</p>';
