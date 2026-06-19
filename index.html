@@ -415,13 +415,28 @@
                 </div>
                 
                 <div class="services-grid" style="grid-template-columns: 1fr;">
-                    
+
+                    <!-- Профиль ученика -->
+                    <div class="service-card" style="text-align: left; display:flex; align-items:center; gap:20px; flex-wrap:wrap;">
+                        <div id="student-avatar" style="width:64px; height:64px; border-radius:50%; background:#3498db; color:#fff; display:flex; align-items:center; justify-content:center; font-size:1.8em; font-weight:700; flex-shrink:0;">🙂</div>
+                        <div style="flex:1; min-width:160px;">
+                            <h3 id="student-name" style="margin:0 0 4px;">Ученик</h3>
+                            <p id="student-meta" style="margin:0; color:#7f8c8d; font-size:0.9em;">—</p>
+                        </div>
+                        <button id="edit-profile-btn" class="action-btn" style="background:#95a5a6;" onclick="editProfile()">✏️ Профиль</button>
+                    </div>
+
+                    <!-- Ближайший урок с обратным отсчётом -->
+                    <div id="student-next-lesson"></div>
+
+                    <!-- Статистика + прогресс -->
                     <div class="service-card" style="text-align: left;">
-                        <h3 style="margin-bottom: 10px;">Твой прогресс</h3>
-                        <div style="background: #eee; width: 100%; height: 12px; border-radius: 6px; margin: 15px 0;">
+                        <h3 style="margin-top:0;">Статистика</h3>
+                        <div id="student-stats" style="display:grid; grid-template-columns:repeat(auto-fit,minmax(110px,1fr)); gap:12px; margin-bottom:20px;"></div>
+                        <div style="background: #eee; width: 100%; height: 12px; border-radius: 6px; margin: 10px 0;">
                             <div id="student-progress-fill" style="background: #2ecc71; width: 0%; height: 100%; border-radius: 6px; transition: width 1s ease-in-out;"></div>
                         </div>
-                        <p id="student-progress-text" style="font-weight: bold; color: #2c3e50;">Пройдено: 0%</p>
+                        <p id="student-progress-text" style="font-weight: bold; color: #2c3e50; margin:0;">Пройдено: 0%</p>
                     </div>
 
                     <div id="student-notification-area"></div>
@@ -430,7 +445,7 @@
                         <h3 style="color: #8e44ad;">📚 База знаний (Теория)</h3>
                             <div id="student-theory-content"></div>
                     </div>
-                    
+
                     <div class="service-card highlight" style="text-align: left;">
                         <h3>🗓 Твои занятия</h3>
                         <div id="student-lesson-content">
@@ -466,7 +481,8 @@
             <form id="set-lesson-form">
                 <input type="hidden" id="lesson-user-id">
                 <input type="text" id="lesson-topic" placeholder="Тема урока (напр. Геометрия)" required class="form-input" style="margin-bottom:15px;">
-                <input type="text" id="lesson-time" placeholder="Время (напр. Завтра в 16:00)" required class="form-input" style="margin-bottom:15px;">
+                <label style="display:block; font-size:0.85em; color:#7f8c8d; margin-bottom:5px;">Дата и время урока</label>
+                <input type="datetime-local" id="lesson-datetime" required class="form-input" style="margin-bottom:15px;">
                 <input type="url" id="lesson-zoom" placeholder="Ссылка на конференцию" required class="form-input" style="margin-bottom:15px;">
                 <textarea id="lesson-hw" placeholder="Домашнее задание (можно вставить ссылки на Яндекс.Диск, скриншоты)..." class="form-textarea" style="margin-bottom:20px; min-height: 60px;"></textarea>
                 <button type="submit" id="lesson-submit-btn" class="submit-btn">Добавить в историю</button>
@@ -575,7 +591,7 @@
                         lessons: [], 
                         hasNewLesson: false, 
                         hasNewHomework: false,
-                        registeredAt: new Date().toISOString()
+                        grade: "", subject: "", avatar: "", lessonsLeft: 0, registeredAt: new Date().toISOString()
                     });
 
                     // ⚠️ ВНИМАНИЕ: токен виден всем в исходнике страницы. Перевыпусти его в @BotFather (/revoke).
@@ -656,6 +672,56 @@
             loadStudents();
         }
 
+        // Ученик редактирует свой профиль
+        window.editProfile = async function() {
+            const user = auth.currentUser;
+            if (!user) return;
+            try {
+                const ref = doc(db, "users", user.uid);
+                const snap = await getDoc(ref);
+                const d = snap.exists() ? snap.data() : {};
+                const avatar = prompt("Эмодзи для аватара (например 🦊). Пусто — будет первая буква имени:", d.avatar || "");
+                if (avatar === null) return;
+                const grade = prompt("Твой класс (например 10-11):", d.grade || "");
+                if (grade === null) return;
+                const subject = prompt("Основной предмет:", d.subject || "");
+                if (subject === null) return;
+                await updateDoc(ref, { avatar: avatar.trim(), grade: grade.trim(), subject: subject.trim() });
+                location.reload();
+            } catch (e) { console.error(e); alert("Не удалось сохранить профиль."); }
+        }
+
+        // Учитель меняет баланс занятий ученика
+        window.setBalance = async function(userId, current) {
+            const v = prompt("Сколько занятий осталось у ученика?", current);
+            if (v === null || v === "") return;
+            let n = parseInt(v);
+            if (!isNaN(n)) {
+                if (n < 0) n = 0;
+                await updateDoc(doc(db, "users", userId), { lessonsLeft: n });
+                loadStudents();
+            }
+        }
+
+        // Учитель ставит оценку и комментарий за ДЗ
+        window.gradeHomework = async function(userId, lessonId) {
+            const grade = prompt("Оценка за ДЗ (например 5):", "");
+            if (grade === null) return;
+            const fb = prompt("Комментарий ученику (необязательно):", "");
+            try {
+                const ref = doc(db, "users", userId);
+                const snap = await getDoc(ref);
+                let lessons = snap.data().lessons || [];
+                const i = lessons.findIndex(l => l.id === lessonId);
+                if (i > -1) {
+                    lessons[i].grade = grade.trim();
+                    lessons[i].teacherFeedback = (fb || "").trim();
+                    await updateDoc(ref, { lessons: lessons });
+                    loadStudents();
+                }
+            } catch (e) { console.error(e); alert("Ошибка при сохранении оценки."); }
+        }
+
         window.openLessonModal = function(userId) {
             document.getElementById('lesson-user-id').value = userId;
             setLessonForm.reset(); 
@@ -671,13 +737,19 @@
             btn.innerText = "Сохранение...";
 
             const userId = document.getElementById('lesson-user-id').value;
+            const dtVal = document.getElementById('lesson-datetime').value;
+            let timeLabel = '';
+            if (dtVal) { const dtObj = new Date(dtVal); if (!isNaN(dtObj.getTime())) timeLabel = dtObj.toLocaleString('ru-RU', { day:'numeric', month:'long', hour:'2-digit', minute:'2-digit' }); }
             const newLesson = {
                 id: Date.now(),
                 topic: document.getElementById('lesson-topic').value,
-                time: document.getElementById('lesson-time').value,
+                datetime: dtVal || '',
+                time: timeLabel,
                 zoom: document.getElementById('lesson-zoom').value,
                 homework: document.getElementById('lesson-hw').value,
-                studentAnswer: ""
+                studentAnswer: "",
+                grade: null,
+                teacherFeedback: ""
             };
 
             try {
@@ -774,22 +846,30 @@
 
                         let recentAnswersHtml = '';
                         if (user.lessons && user.lessons.length > 0) {
-                            user.lessons.slice(0, 2).forEach(lesson => {
+                            user.lessons.slice(0, 3).forEach(lesson => {
                                 if (lesson.studentAnswer) {
+                                    const gradeLabel = (lesson.grade !== undefined && lesson.grade !== null && lesson.grade !== '')
+                                        ? `<span style="background:#27ae60; color:#fff; padding:1px 7px; border-radius:8px;">${lesson.grade}</span>`
+                                        : `<span style="color:#e67e22;">не оценено</span>`;
                                     recentAnswersHtml += `
-                                        <div style="margin-top: 5px; padding: 5px; background: #e8f8f5; border-left: 3px solid #2ecc71; font-size: 0.8em;">
-                                            <strong>${lesson.topic}:</strong> ${lesson.studentAnswer}
+                                        <div style="margin-top: 5px; padding: 6px; background: #e8f8f5; border-left: 3px solid #2ecc71; font-size: 0.8em;">
+                                            <strong>${lesson.topic}:</strong> ${lesson.studentAnswer}<br>
+                                            Оценка: ${gradeLabel}
+                                            <button class="action-btn" style="font-size:0.75em; padding:3px 9px; margin-left:6px;" onclick="gradeHomework('${userId}', ${lesson.id})">Оценить</button>
+                                            ${lesson.teacherFeedback ? `<div style="margin-top:3px; color:#555;">💬 ${lesson.teacherFeedback}</div>` : ''}
                                         </div>
                                     `;
                                 }
                             });
                         }
 
+                        const balanceLabel = (user.lessonsLeft === undefined || user.lessonsLeft === null) ? '—' : user.lessonsLeft;
                         list.innerHTML += `
                             <tr>
                                 <td>
-                                    <strong>${user.name}</strong><br>
+                                    <strong>${user.avatar ? user.avatar + ' ' : ''}${user.name}</strong><br>
                                     <span style="font-size:0.8em; color:#7f8c8d;">${user.email}</span>
+                                    <div style="font-size:0.8em; color:#2c3e50; margin-top:3px;">Осталось занятий: <strong>${balanceLabel}</strong></div>
                                 </td>
                                 <td>
                                     <div style="background: #eee; width: 100%; height: 8px; border-radius: 4px; margin-bottom: 5px;">
@@ -800,6 +880,7 @@
                                 <td>
                                     <div style="display: flex; gap: 5px; flex-wrap: wrap;">
                                         <button class="action-btn" onclick="updateProgress('${userId}', ${user.progress})">%</button>
+                                        <button class="action-btn" style="background-color: #16a085;" onclick="setBalance('${userId}', ${user.lessonsLeft === undefined || user.lessonsLeft === null ? 0 : user.lessonsLeft})">Баланс</button>
                                         <button class="action-btn" style="background-color: #f39c12;" onclick="openLessonModal('${userId}')">Урок</button>
                                         <button class="action-btn" style="background-color: ${theoryBtnColor};" onclick="toggleTheory('${userId}', ${theoryStatus})">Теория</button>
                                     </div>
@@ -813,6 +894,33 @@
             } catch (e) { 
                 console.error(e); 
             }
+        }
+
+        // --- Помощники: даты и обратный отсчёт ---
+        function parseLessonDate(lesson) {
+            if (lesson && lesson.datetime) {
+                const d = new Date(lesson.datetime);
+                if (!isNaN(d.getTime())) return d;
+            }
+            return null;
+        }
+        function fmtDateTime(d) {
+            try { return d.toLocaleString('ru-RU', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' }); }
+            catch (e) { return d.toString(); }
+        }
+        function countdownText(target) {
+            let diff = Math.floor((target.getTime() - Date.now()) / 1000);
+            if (diff <= 0) return 'совсем скоро';
+            const days = Math.floor(diff / 86400); diff %= 86400;
+            const hours = Math.floor(diff / 3600); diff %= 3600;
+            const mins = Math.floor(diff / 60);
+            const secs = diff % 60;
+            const parts = [];
+            if (days) parts.push(days + ' д');
+            if (days || hours) parts.push(hours + ' ч');
+            parts.push(mins + ' мин');
+            if (!days) parts.push(secs + ' сек');
+            return parts.join(' ');
         }
 
         // Проверка авторизации
@@ -834,14 +942,81 @@
                             admin.style.display = 'block'; 
                             loadStudents();
                         } else {
-                            main.style.display = 'none'; 
-                            admin.style.display = 'none'; 
-                            lk.style.display = 'block'; 
-                            
+                            main.style.display = 'none';
+                            admin.style.display = 'none';
+                            lk.style.display = 'block';
+
+                            const lessonsArray = userData.lessons || [];
+
+                            // Приветствие и профиль
+                            const sName = userData.name || 'Ученик';
+                            document.getElementById('lk-welcome').innerText = `Привет, ${sName}! 🚀`;
+                            document.getElementById('student-avatar').innerText = userData.avatar || (sName.trim().charAt(0).toUpperCase() || '🙂');
+                            document.getElementById('student-name').innerText = sName;
+                            const metaParts = [];
+                            if (userData.grade) metaParts.push(userData.grade + ' класс');
+                            if (userData.subject) metaParts.push(userData.subject);
+                            document.getElementById('student-meta').innerText = metaParts.length ? metaParts.join(' · ') : 'Класс и предмет не указаны';
+
+                            // Прогресс
                             document.getElementById('student-progress-fill').style.width = `${userData.progress}%`;
                             document.getElementById('student-progress-text').innerText = `Пройдено: ${userData.progress}%`;
 
-                            // Уведомление для ученика
+                            // Статистика
+                            const doneHw = lessonsArray.filter(l => l.studentAnswer).length;
+                            const gradeNums = lessonsArray.map(l => parseFloat(l.grade)).filter(n => !isNaN(n));
+                            const avgGrade = gradeNums.length ? (gradeNums.reduce((a, b) => a + b, 0) / gradeNums.length).toFixed(1) : '—';
+                            const balance = (userData.lessonsLeft === undefined || userData.lessonsLeft === null) ? '—' : userData.lessonsLeft;
+                            const statTile = (label, value, color) => `
+                                <div style="background:#f8f9fa; border-radius:8px; padding:12px; text-align:center;">
+                                    <div style="font-size:1.6em; font-weight:700; color:${color};">${value}</div>
+                                    <div style="font-size:0.78em; color:#7f8c8d;">${label}</div>
+                                </div>`;
+                            document.getElementById('student-stats').innerHTML =
+                                statTile('Уроков', lessonsArray.length, '#3498db') +
+                                statTile('Сдано ДЗ', doneHw, '#2ecc71') +
+                                statTile('Средний балл', avgGrade, '#e67e22') +
+                                statTile('Осталось занятий', balance, '#16a085');
+
+                            // Ближайший урок + обратный отсчёт
+                            const nextBox = document.getElementById('student-next-lesson');
+                            if (window.__countdownTimer) { clearInterval(window.__countdownTimer); window.__countdownTimer = null; }
+                            const upcoming = lessonsArray
+                                .map(l => ({ l, d: parseLessonDate(l) }))
+                                .filter(x => x.d && x.d > new Date())
+                                .sort((a, b) => a.d - b.d);
+                            if (upcoming.length) {
+                                const nx = upcoming[0];
+                                nextBox.innerHTML = `
+                                    <div class="service-card" style="text-align:left; border-top:5px solid #3498db; background:linear-gradient(135deg,#eef5fc,#ffffff);">
+                                        <div style="font-size:0.8em; color:#3498db; font-weight:700; text-transform:uppercase; letter-spacing:1px;">Ближайший урок</div>
+                                        <h3 style="margin:8px 0; color:#2c3e50;">${nx.l.topic}</h3>
+                                        <p style="margin:0 0 6px; color:#2c3e50;">📅 ${fmtDateTime(nx.d)}</p>
+                                        <p style="margin:0 0 14px; color:#e67e22; font-weight:700;">⏳ Осталось: <span id="lesson-countdown">…</span></p>
+                                        <a href="${nx.l.zoom}" target="_blank" class="action-btn" style="display:inline-block; padding:10px 18px; text-decoration:none;">📹 Подключиться</a>
+                                    </div>`;
+                                const target = nx.d;
+                                const tick = () => {
+                                    const el = document.getElementById('lesson-countdown');
+                                    if (!el) { clearInterval(window.__countdownTimer); return; }
+                                    el.innerText = countdownText(target);
+                                };
+                                tick();
+                                window.__countdownTimer = setInterval(tick, 1000);
+                            } else if (lessonsArray.length) {
+                                const l0 = lessonsArray[0];
+                                nextBox.innerHTML = `
+                                    <div class="service-card" style="text-align:left; border-top:5px solid #3498db;">
+                                        <div style="font-size:0.8em; color:#3498db; font-weight:700; text-transform:uppercase; letter-spacing:1px;">Последний урок</div>
+                                        <h3 style="margin:8px 0; color:#2c3e50;">${l0.topic}</h3>
+                                        <p style="margin:0 0 14px; color:#7f8c8d;">${l0.time || ''}</p>
+                                        <a href="${l0.zoom}" target="_blank" class="action-btn" style="display:inline-block; padding:10px 18px; text-decoration:none;">📹 Подключиться</a>
+                                    </div>`;
+                            } else {
+                                nextBox.innerHTML = '';
+                            }
+
+                            // Уведомление о новом уроке
                             const notifArea = document.getElementById('student-notification-area');
                             if (userData.hasNewLesson) {
                                 notifArea.innerHTML = `
@@ -870,15 +1045,15 @@
                                 `;
                             }
 
-                            // Уроки
+                            // Список уроков
                             const lessonContentBox = document.getElementById('student-lesson-content');
-                            const lessonsArray = userData.lessons || [];
-                            
                             if (lessonsArray.length > 0) {
                                 let htmlString = '';
                                 lessonsArray.forEach((lesson, index) => {
-                                    const bgStyle = index === 0 ? 'background: #fff; border: 2px solid #3498db;' : 'background: #fdfdfd; border: 1px solid #eee; opacity: 0.9;';
-                                    
+                                    const bgStyle = index === 0 ? 'background: #fff; border: 2px solid #3498db;' : 'background: #fdfdfd; border: 1px solid #eee; opacity: 0.95;';
+                                    const lessonD = parseLessonDate(lesson);
+                                    const timeLabel = lessonD ? fmtDateTime(lessonD) : (lesson.time || '');
+
                                     let studentActionHtml = '';
                                     if (lesson.studentAnswer) {
                                         studentActionHtml = `
@@ -895,17 +1070,28 @@
                                         `;
                                     }
 
+                                    let gradeHtml = '';
+                                    if (lesson.grade !== undefined && lesson.grade !== null && lesson.grade !== '') {
+                                        gradeHtml = `
+                                            <div style="background:#eafaf1; border-left:3px solid #27ae60; padding:10px; margin-top:10px; border-radius:4px;">
+                                                <strong style="color:#27ae60;">Оценка: ${lesson.grade}</strong>
+                                                ${lesson.teacherFeedback ? `<div style="margin-top:4px; color:#555; font-size:0.9em;">💬 ${lesson.teacherFeedback}</div>` : ''}
+                                            </div>
+                                        `;
+                                    }
+
                                     htmlString += `
                                         <div style="padding: 20px; border-radius: 8px; margin-bottom: 20px; ${bgStyle}">
-                                            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 10px;">
+                                            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 10px; gap:10px; flex-wrap:wrap;">
                                                 <h4 style="margin: 0; color: #2c3e50;">${lesson.topic}</h4>
-                                                <span style="background: #ecf0f1; padding: 3px 8px; border-radius: 12px; font-size: 0.8em; font-weight: bold;">${lesson.time}</span>
+                                                <span style="background: #ecf0f1; padding: 3px 8px; border-radius: 12px; font-size: 0.8em; font-weight: bold;">${timeLabel}</span>
                                             </div>
                                             <a href="${lesson.zoom}" target="_blank" class="action-btn" style="display: inline-block; padding: 8px 15px; margin-bottom: 15px; text-decoration: none;">📹 Подключиться</a>
                                             <div style="background: #fdf2e9; padding: 12px; border-left: 3px solid #f39c12;">
                                                 <p style="margin: 0; font-size: 0.9em; color: #e67e22;"><strong>Домашнее задание:</strong><br>${lesson.homework || "<i>Позже</i>"}</p>
                                                 ${studentActionHtml}
                                             </div>
+                                            ${gradeHtml}
                                         </div>
                                     `;
                                 });
