@@ -1,0 +1,44 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Проверка: текущий пользователь — учитель (admin)?
+    function isAdmin() {
+      return request.auth != null
+        && exists(/databases/$(database)/documents/users/$(request.auth.uid))
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    match /users/{userId} {
+
+      // ЧИТАТЬ: свой профиль — сам ученик; все профили — только учитель
+      allow read: if request.auth != null
+        && (request.auth.uid == userId || isAdmin());
+
+      // СОЗДАВАТЬ (регистрация): только сам за себя и только с ролью "student".
+      // Это запрещает сделать себя админом прямо при регистрации.
+      allow create: if request.auth != null
+        && request.auth.uid == userId
+        && request.resource.data.role == 'student';
+
+      // ОБНОВЛЯТЬ:
+      //  - учитель (admin) может менять всё (прогресс, уроки, доступ к теории);
+      //  - сам ученик может менять свои данные (например, сдавать ДЗ),
+      //    НО не может сам себе поднять роль до admin или открыть теорию.
+      allow update: if isAdmin()
+        || (request.auth != null
+            && request.auth.uid == userId
+            && request.resource.data.role == resource.data.role
+            && request.resource.data.theoryAccess == resource.data.theoryAccess);
+
+      // УДАЛЯТЬ: только учитель
+      allow delete: if isAdmin();
+    }
+
+    // Всё остальное по умолчанию закрыто
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

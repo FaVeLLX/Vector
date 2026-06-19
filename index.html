@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Онлайн-школа Vector</title>
-    <link rel="icon" href="обложка.png" type="image/png">
+    <link rel="icon" href="logo.png" type="image/png">
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,40 +12,7 @@
     
     <link rel="stylesheet" href="style.css">
     
-    <style>
-        /* Анимация пульсации для уведомлений */
-        @keyframes pulse-red {
-            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.7); }
-            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(231, 76, 60, 0); }
-            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(231, 76, 60, 0); }
-        }
-        .badge-new {
-            background-color: #e74c3c;
-            color: white;
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 0.8em;
-            font-weight: bold;
-            display: inline-block;
-            animation: pulse-red 2s infinite;
-            margin-left: 10px;
-        }
-        .badge-clear-btn {
-            background: none;
-            border: 1px solid #e74c3c;
-            color: #e74c3c;
-            padding: 2px 8px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 0.8em;
-            margin-left: 10px;
-            transition: 0.3s;
-        }
-        .badge-clear-btn:hover {
-            background: #e74c3c;
-            color: white;
-        }
-    </style>
+
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     
@@ -81,7 +48,7 @@
     <header>
         <div class="container">
             <div class="logo">
-                 <img src="обложка.png" alt="Логотип Vector" class="logo-icon">
+                 <img src="logo.png" alt="Логотип Vector" class="logo-icon">
                  <span>VECTOR</span>
             </div>
             <nav>
@@ -459,8 +426,6 @@
 
                     <div id="student-notification-area"></div>
 
-                    <div id="student-notification-area"></div>
-
                     <div id="theory-section-anchor" class="service-card highlight" style="text-align: left; border-top-color: #9b59b6;">
                         <h3 style="color: #8e44ad;">📚 База знаний (Теория)</h3>
                             <div id="student-theory-content"></div>
@@ -613,6 +578,7 @@
                         registeredAt: new Date().toISOString()
                     });
 
+                    // ⚠️ ВНИМАНИЕ: токен виден всем в исходнике страницы. Перевыпусти его в @BotFather (/revoke).
                     const tgToken = '8340993627:AAEu7ax6CSN643NTi-mwerzSzGV1I8Gt42U';
                     const tgChat = '-1003612200808';
                     const tgMessage = `🚀 *НОВАЯ РЕГИСТРАЦИЯ!*\n👤 *Имя:* ${name}\n📧 *Email:* ${email}`;
@@ -641,6 +607,34 @@
 
         window.logout = function() { 
             signOut(auth); 
+        }
+
+        // Клик по "Теория 📚" в шапке: пускаем только тех, у кого открыт доступ
+        window.handleTheoryClick = async function(event) {
+            event.preventDefault();
+            const user = auth.currentUser;
+            const promo = document.getElementById('theory-promo-msg');
+
+            // Гость — отправляем записываться на урок
+            if (!user) {
+                if (promo) promo.style.display = 'block';
+                const c = document.getElementById('contact');
+                if (c) c.scrollIntoView({ behavior: 'smooth' });
+                return;
+            }
+
+            try {
+                const snap = await getDoc(doc(db, "users", user.uid));
+                const data = snap.exists() ? snap.data() : {};
+                if (data.role === 'admin' || data.theoryAccess) {
+                    window.open('theory.html', '_blank');   // доступ есть — открываем шпаргалку
+                } else {
+                    alert("📚 Доступ к теории пока закрыт. Попроси преподавателя открыть его в твоём кабинете 🙂");
+                }
+            } catch (e) {
+                console.error(e);
+                alert("Не удалось проверить доступ. Попробуй ещё раз.");
+            }
         }
 
         window.updateProgress = async function(userId, currentProgress) {
@@ -865,10 +859,7 @@
                             if (userData.theoryAccess) {
                                 theoryBox.innerHTML = `
                                     <p style="color: #27ae60; font-weight: bold; margin-bottom: 15px;">Доступ открыт! Твои справочные материалы:</p>
-                                    <div style="text-align: center; margin-bottom: 20px;">
-                                        <p style="color: #2c3e50; font-weight: bold; margin-bottom: 10px;">Шпаргалка: Свойства треугольников</p>
-                                        <img src="ВСТАВЬ_ССЫЛКУ_ИЗ_IMGBB_СЮДА" alt="Свойства треугольников" style="max-width: 100%; border-radius: 8px; border: 1px solid #ddd; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
-                                    </div>
+                                    <a href="theory.html" target="_blank" class="action-btn" style="display:inline-block; padding:12px 22px; text-decoration:none; background-color:#8e44ad; font-size:1em;">📐 Открыть шпаргалку: Площади фигур</a>
                                 `;
                             } else {
                                 theoryBox.innerHTML = `
@@ -941,6 +932,7 @@
     </script>
 
     <script>
+        // ⚠️ ВНИМАНИЕ: токен виден всем в исходнике страницы. Перевыпусти его в @BotFather (/revoke).
         const TELEGRAM_BOT_TOKEN = '8340993627:AAEu7ax6CSN643NTi-mwerzSzGV1I8Gt42U';
         const TELEGRAM_CHAT_ID = '-1003612200808';
 
