@@ -504,6 +504,43 @@
     </footer>
 
     <script type="module">
+        // ✅ Функция для валидации email
+        window.isValidEmail = function(email) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        };
+
+        // ✅ Функция для валидации пароля
+        window.isValidPassword = function(password) {
+            return password && password.length >= 6;
+        };
+
+        // ✅ Rate limiting: максимум 5 попыток входа за 15 минут
+        const loginAttempts = {};
+        window.checkLoginRateLimit = function(email) {
+            const now = Date.now();
+            const key = email;
+            if (!loginAttempts[key]) loginAttempts[key] = [];
+            loginAttempts[key] = loginAttempts[key].filter(t => now - t < 15 * 60 * 1000);
+            if (loginAttempts[key].length >= 5) return false;
+            loginAttempts[key].push(now);
+            return true;
+        };
+
+        // ✅ Функция для логирования попыток входа в Firestore
+        window.logAuthAttempt = async function(email, success) {
+            try {
+                await setDoc(doc(db, "audit_logs", `${Date.now()}_${Math.random()}`), {
+                    event: "auth_attempt",
+                    email: email,
+                    success: success,
+                    timestamp: new Date(),
+                    userAgent: navigator.userAgent
+                });
+            } catch (e) {
+                console.error("Ошибка логирования:", e);
+            }
+        };
+
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc, collection, getDocs, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -574,10 +611,30 @@
 
         authForm.onsubmit = async (e) => {
             e.preventDefault();
-            const email = document.getElementById('auth-email').value;
+            const email = document.getElementById('auth-email').value.trim();
             const password = document.getElementById('auth-password').value;
-            const name = document.getElementById('auth-name').value;
+            const name = document.getElementById('auth-name').value.trim();
             const submitBtn = document.getElementById('auth-submit-btn');
+            
+            // ✅ Валидация
+            if (!isValidEmail(email)) {
+                authError.innerText = "Некорректный email адрес";
+                return;
+            }
+            if (!isValidPassword(password)) {
+                authError.innerText = "Пароль должен быть >= 6 символов";
+                return;
+            }
+            if (!isLoginMode && (!name || name.length < 2)) {
+                authError.innerText = "Имя должно быть >= 2 символов";
+                return;
+            }
+            
+            // ✅ Rate limiting
+            if (!checkLoginRateLimit(email)) {
+                authError.innerText = "Слишком много попыток входа. Попробуйте позже.";
+                return;
+            }
             
             submitBtn.disabled = true; 
             submitBtn.innerText = 'Загрузка...';
@@ -585,7 +642,13 @@
             try {
                 if (isLoginMode) {
                     await signInWithEmailAndPassword(auth, email, password);
+                    await logAuthAttempt(email, true);
                 } else {
+                    // Валидация имени от XSS
+                    if (!/^[a-яёА-ЯЁa-zA-Z\s\-']{2,50}$/.test(name)) {
+                        throw new Error("Имя содержит недопустимые символы");
+                    }
+                    
                     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
                     const user = userCredential.user;
                     
@@ -601,27 +664,50 @@
                         grade: "", subject: "", avatar: "", lessonsLeft: 0, registeredAt: new Date().toISOString()
                     });
 
-                    // ⚠️ ВНИМАНИЕ: токен виден всем в исходнике страницы. Перевыпусти его в @BotFather (/revoke).
-                    const tgToken = '8340993627:AAEu7ax6CSN643NTi-mwerzSzGV1I8Gt42U';
-                    const tgChat = '-1003612200808';
-                    const tgMessage = `🚀 *НОВАЯ РЕГИСТРАЦИЯ!*\n👤 *Имя:* ${name}\n📧 *Email:* ${email}`;
+                    // ✅ Отправляем email о регистрации через Web3Forms
+                    try {
+                        await fetch('https://api.web3forms.com/submit', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                access_key: 'e6375479-9bd3-4349-aab6-dfe0d322f82e',
+                                from_name: 'Vector School Bot',
+                                email: 'vectorschoolsupp@mail.ru',
+                                subject: '🚀 Новая регистрация - ' + escapeHtml(name),
+                                message: `👤 Имя: ${escapeHtml(name)}\n📧 Email: ${escapeHtml(email)}`,
+                                reply_to: escapeHtml(email),
+                                redirect: ''
+                            })
+                        });
+                    } catch (err) {
+                        console.error("Ошибка отправки email регистрации:", err);
+                        // Не блокируем регистрацию если email недоступен
+                    }
                     
-                    fetch(`https://api.telegram.org/bot${tgToken}/sendMessage`, {
-                        method: 'POST', 
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ 
-                            chat_id: tgChat, 
-                            message_thread_id: '2', 
-                            text: tgMessage, 
-                            parse_mode: 'Markdown' 
-                        })
-                    }).catch(err => console.error("Ошибка TG:", err));
+                    await logAuthAttempt(email, true);
                 }
                 
                 authModal.style.display = "none"; 
                 authForm.reset();
+                authError.innerText = '';
             } catch (error) {
-                document.getElementById('auth-error').innerText = "Ошибка: " + error.message;
+                await logAuthAttempt(email, false);
+                let errorMsg = "Ошибка: ";
+                if (error.code === 'auth/email-already-in-use') {
+                    errorMsg += "Этот email уже зарегистрирован";
+                } else if (error.code === 'auth/weak-password') {
+                    errorMsg += "Пароль слишком слабый";
+                } else if (error.code === 'auth/user-not-found') {
+                    errorMsg += "Пользователь не найден";
+                } else if (error.code === 'auth/wrong-password') {
+                    errorMsg += "Неверный пароль";
+                } else {
+                    errorMsg += error.message;
+                }
+                authError.innerText = errorMsg;
             } finally {
                 submitBtn.disabled = false; 
                 submitBtn.innerText = isLoginMode ? 'Войти' : 'Зарегистрироваться';
@@ -858,14 +944,16 @@
                             user.lessons.slice(0, 3).forEach(lesson => {
                                 if (lesson.studentAnswer) {
                                     const gradeLabel = (lesson.grade !== undefined && lesson.grade !== null && lesson.grade !== '')
-                                        ? `<span style="background:#27ae60; color:#fff; padding:1px 7px; border-radius:8px;">${lesson.grade}</span>`
+                                        ? `<span style="background:#27ae60; color:#fff; padding:1px 7px; border-radius:8px;">${escapeHtml(String(lesson.grade))}</span>`
                                         : `<span style="color:#e67e22;">не оценено</span>`;
+                                    const safeAnswer = escapeHtml(lesson.studentAnswer);
+                                    const safeFeedback = lesson.teacherFeedback ? escapeHtml(lesson.teacherFeedback) : '';
                                     recentAnswersHtml += `
                                         <div style="margin-top: 5px; padding: 6px; background: #e8f8f5; border-left: 3px solid #2ecc71; font-size: 0.8em;">
-                                            <strong>${lesson.topic}:</strong> ${lesson.studentAnswer}<br>
+                                            <strong>${escapeHtml(lesson.topic)}:</strong> ${safeAnswer}<br>
                                             Оценка: ${gradeLabel}
                                             <button class="action-btn" style="font-size:0.75em; padding:3px 9px; margin-left:6px;" onclick="gradeHomework('${userId}', ${lesson.id})">Оценить</button>
-                                            ${lesson.teacherFeedback ? `<div style="margin-top:3px; color:#555;">💬 ${lesson.teacherFeedback}</div>` : ''}
+                                            ${safeFeedback ? `<div style="margin-top:3px; color:#555;">💬 ${safeFeedback}</div>` : ''}
                                         </div>
                                     `;
                                 }
@@ -873,11 +961,14 @@
                         }
 
                         const balanceLabel = (user.lessonsLeft === undefined || user.lessonsLeft === null) ? '—' : user.lessonsLeft;
+                        const safeName = escapeHtml(user.name);
+                        const safeEmail = escapeHtml(user.email);
+                        const safeAvatar = escapeHtml(user.avatar || '');
                         list.innerHTML += `
                             <tr>
                                 <td>
-                                    <strong>${user.avatar ? user.avatar + ' ' : ''}${user.name}</strong><br>
-                                    <span style="font-size:0.8em; color:#7f8c8d;">${user.email}</span>
+                                    <strong>${safeAvatar ? safeAvatar + ' ' : ''}${safeName}</strong><br>
+                                    <span style="font-size:0.8em; color:#7f8c8d;">${safeEmail}</span>
                                     <div style="font-size:0.8em; color:#2c3e50; margin-top:3px;">Осталось занятий: <strong>${balanceLabel}</strong></div>
                                 </td>
                                 <td>
@@ -938,13 +1029,14 @@
 
                             // Приветствие и профиль
                             const sName = userData.name || 'Ученик';
-                            document.getElementById('lk-welcome').innerText = `Привет, ${sName}! 🚀`;
-                            document.getElementById('student-avatar').innerText = userData.avatar || (sName.trim().charAt(0).toUpperCase() || '🙂');
-                            document.getElementById('student-name').innerText = sName;
+                            document.getElementById('lk-welcome').textContent = `Привет, ${escapeHtml(sName)}! 🚀`;
+                            const avatarEl = document.getElementById('student-avatar');
+                            avatarEl.textContent = userData.avatar || (sName.trim().charAt(0).toUpperCase() || '🙂');
+                            document.getElementById('student-name').textContent = sName;
                             const metaParts = [];
-                            if (userData.grade) metaParts.push(userData.grade + ' класс');
-                            if (userData.subject) metaParts.push(userData.subject);
-                            document.getElementById('student-meta').innerText = metaParts.length ? metaParts.join(' · ') : 'Класс и предмет не указаны';
+                            if (userData.grade) metaParts.push(escapeHtml(userData.grade) + ' класс');
+                            if (userData.subject) metaParts.push(escapeHtml(userData.subject));
+                            document.getElementById('student-meta').textContent = metaParts.length ? metaParts.join(' · ') : 'Класс и предмет не указаны';
 
                             // Прогресс
                             document.getElementById('student-progress-fill').style.width = `${userData.progress}%`;
@@ -976,13 +1068,15 @@
                                 .sort((a, b) => a.d - b.d);
                             if (upcoming.length) {
                                 const nx = upcoming[0];
+                                const safeTopic = escapeHtml(nx.l.topic);
+                                const safeZoom = (nx.l.zoom || '').replace(/"/g, '&quot;');
                                 nextBox.innerHTML = `
                                     <div class="lk-card" style="border-top:5px solid #3498db; background:linear-gradient(135deg,#eef5fc,#ffffff);">
                                         <div style="font-size:0.8em; color:#3498db; font-weight:700; text-transform:uppercase; letter-spacing:1px;">Ближайший урок</div>
-                                        <h3 style="margin:8px 0; color:#2c3e50;">${nx.l.topic}</h3>
+                                        <h3 style="margin:8px 0; color:#2c3e50;">${safeTopic}</h3>
                                         <p style="margin:0 0 6px; color:#2c3e50;">📅 ${fmtDateTime(nx.d)}</p>
                                         <p style="margin:0 0 14px; color:#e67e22; font-weight:700;">⏳ Осталось: <span id="lesson-countdown">…</span></p>
-                                        <a href="${nx.l.zoom}" target="_blank" class="action-btn" style="display:inline-block; padding:10px 18px; text-decoration:none;">📹 Подключиться</a>
+                                        <a href="${safeZoom}" target="_blank" class="action-btn" style="display:inline-block; padding:10px 18px; text-decoration:none;">📹 Подключиться</a>
                                     </div>`;
                                 const target = nx.d;
                                 const tick = () => {
@@ -994,12 +1088,14 @@
                                 window.__countdownTimer = setInterval(tick, 1000);
                             } else if (lessonsArray.length) {
                                 const l0 = lessonsArray[0];
+                                const safeTopic = escapeHtml(l0.topic);
+                                const safeZoom = (l0.zoom || '').replace(/"/g, '&quot;');
                                 nextBox.innerHTML = `
                                     <div class="lk-card" style="border-top:5px solid #3498db;">
                                         <div style="font-size:0.8em; color:#3498db; font-weight:700; text-transform:uppercase; letter-spacing:1px;">Последний урок</div>
-                                        <h3 style="margin:8px 0; color:#2c3e50;">${l0.topic}</h3>
+                                        <h3 style="margin:8px 0; color:#2c3e50;">${safeTopic}</h3>
                                         <p style="margin:0 0 14px; color:#7f8c8d;">${l0.time || ''}</p>
-                                        <a href="${l0.zoom}" target="_blank" class="action-btn" style="display:inline-block; padding:10px 18px; text-decoration:none;">📹 Подключиться</a>
+                                        <a href="${safeZoom}" target="_blank" class="action-btn" style="display:inline-block; padding:10px 18px; text-decoration:none;">📹 Подключиться</a>
                                     </div>`;
                             } else {
                                 nextBox.innerHTML = '';
@@ -1046,9 +1142,10 @@
 
                                     let studentActionHtml = '';
                                     if (lesson.studentAnswer) {
+                                        const safeAnswer = escapeHtml(lesson.studentAnswer);
                                         studentActionHtml = `
                                             <div style="background: #e8f8f5; padding: 10px; border-radius: 5px; margin-top: 10px;">
-                                                <p style="margin:0; color: #27ae60; font-size: 0.9em;"><strong>✅ ДЗ сдано:</strong> ${lesson.studentAnswer}</p>
+                                                <p style="margin:0; color: #27ae60; font-size: 0.9em;"><strong>✅ ДЗ сдано:</strong> ${safeAnswer}</p>
                                             </div>
                                         `;
                                     } else {
@@ -1062,23 +1159,28 @@
 
                                     let gradeHtml = '';
                                     if (lesson.grade !== undefined && lesson.grade !== null && lesson.grade !== '') {
+                                        const safeGrade = escapeHtml(String(lesson.grade));
+                                        const safeFeedback = lesson.teacherFeedback ? escapeHtml(lesson.teacherFeedback) : '';
                                         gradeHtml = `
                                             <div style="background:#eafaf1; border-left:3px solid #27ae60; padding:10px; margin-top:10px; border-radius:4px;">
-                                                <strong style="color:#27ae60;">Оценка: ${lesson.grade}</strong>
-                                                ${lesson.teacherFeedback ? `<div style="margin-top:4px; color:#555; font-size:0.9em;">💬 ${lesson.teacherFeedback}</div>` : ''}
+                                                <strong style="color:#27ae60;">Оценка: ${safeGrade}</strong>
+                                                ${safeFeedback ? `<div style="margin-top:4px; color:#555; font-size:0.9em;">💬 ${safeFeedback}</div>` : ''}
                                             </div>
                                         `;
                                     }
 
+                                    const safeTopic = escapeHtml(lesson.topic);
+                                    const safeHomework = lesson.homework ? escapeHtml(lesson.homework) : "<i>Позже</i>";
+                                    const safeZoom = (lesson.zoom || '').replace(/"/g, '&quot;');
                                     htmlString += `
                                         <div style="padding: 20px; border-radius: 8px; margin-bottom: 20px; ${bgStyle}">
                                             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 10px; gap:10px; flex-wrap:wrap;">
-                                                <h4 style="margin: 0; color: #2c3e50;">${lesson.topic}</h4>
+                                                <h4 style="margin: 0; color: #2c3e50;">${safeTopic}</h4>
                                                 <span style="background: #ecf0f1; padding: 3px 8px; border-radius: 12px; font-size: 0.8em; font-weight: bold;">${timeLabel}</span>
                                             </div>
-                                            <a href="${lesson.zoom}" target="_blank" class="action-btn" style="display: inline-block; padding: 8px 15px; margin-bottom: 15px; text-decoration: none;">📹 Подключиться</a>
+                                            <a href="${safeZoom}" target="_blank" class="action-btn" style="display: inline-block; padding: 8px 15px; margin-bottom: 15px; text-decoration: none;">📹 Подключиться</a>
                                             <div style="background: #fdf2e9; padding: 12px; border-left: 3px solid #f39c12;">
-                                                <p style="margin: 0; font-size: 0.9em; color: #e67e22;"><strong>Домашнее задание:</strong><br>${lesson.homework || "<i>Позже</i>"}</p>
+                                                <p style="margin: 0; font-size: 0.9em; color: #e67e22;"><strong>Домашнее задание:</strong><br>${safeHomework}</p>
                                                 ${studentActionHtml}
                                             </div>
                                             ${gradeHtml}
@@ -1134,9 +1236,33 @@
     </script>
 
     <script>
-        // ⚠️ ВНИМАНИЕ: токен виден всем в исходнике страницы. Перевыпусти его в @BotFather (/revoke).
-        const TELEGRAM_BOT_TOKEN = '8340993627:AAEu7ax6CSN643NTi-mwerzSzGV1I8Gt42U';
-        const TELEGRAM_CHAT_ID = '-1003612200808';
+        // ✅ Валидация формы бронирования
+        function validateBookingForm(data) {
+            if (!data.name || data.name.trim().length < 2) 
+                throw new Error("Имя должно быть >= 2 символов");
+            
+            if (!data.email || !isValidEmail(data.email))
+                throw new Error("Некорректный email");
+            
+            if (!data.phone || data.phone.trim().length < 5)
+                throw new Error("Некорректный телефон/Telegram");
+            
+            if (data.message && data.message.length > 500)
+                throw new Error("Сообщение не может быть > 500 символов");
+            
+            return true;
+        }
+
+        // ✅ Rate limiting для форм
+        const formSubmitTimes = {};
+        function canSubmitForm(formId) {
+            const now = Date.now();
+            if (!formSubmitTimes[formId]) formSubmitTimes[formId] = [];
+            formSubmitTimes[formId] = formSubmitTimes[formId].filter(t => now - t < 60000); // 1 минута
+            if (formSubmitTimes[formId].length >= 3) return false; // 3 отправки в минуту
+            formSubmitTimes[formId].push(now);
+            return true;
+        }
 
         function openTab(evt, subjectName) {
             var i, tabcontent, tablinks;
@@ -1187,45 +1313,70 @@
             });
         }
 
-        document.getElementById('lesson-form').addEventListener('submit', function(e) {
+        document.getElementById('lesson-form').addEventListener('submit', async function(e) {
             e.preventDefault();
             const formData = new FormData(this);
             const submitBtn = this.querySelector('button[type="submit"]');
             const messageDiv = document.getElementById('form-message');
             
+            // ✅ Валидация
+            try {
+                validateBookingForm({
+                    name: formData.get('name'),
+                    email: formData.get('email'),
+                    phone: formData.get('phone'),
+                    message: formData.get('message')
+                });
+            } catch (err) {
+                messageDiv.innerHTML = `<p style="color: #e74c3c;">❌ ${err.message}</p>`;
+                return;
+            }
+            
+            // ✅ Rate limiting
+            if (!canSubmitForm('lesson-form')) {
+                messageDiv.innerHTML = '<p style="color: #e74c3c;">❌ Слишком часто отправляете. Подождите...</p>';
+                return;
+            }
+            
             submitBtn.textContent = 'Отправляем...';
             submitBtn.disabled = true;
             submitBtn.style.backgroundColor = '#e67e22';
+            messageDiv.innerHTML = '';
             
-            const telegramMessage = `🎓 *НОВАЯ ЗАЯВКА (VECTOR)*\n👤 *Имя:* ${formData.get('name')}\n📧 *Email:* ${formData.get('email')}\n📞 *Тел:* ${formData.get('phone')}\n📚 *Предмет:* ${formData.get('subject')}\n🏫 *Класс:* ${formData.get('grade')}\n🎯 *Тип:* ${formData.get('lesson_type')}\n💬 *Инфо:* ${formData.get('message') || '-'}`;
-            
-            fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
-                    chat_id: TELEGRAM_CHAT_ID, 
-                    message_thread_id: '3', 
-                    text: telegramMessage, 
-                    parse_mode: 'Markdown' 
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.ok) {
-                    messageDiv.innerHTML = '<p style="color: #2ecc71;">✅ Спасибо! Заявка отправлена.</p>';
+            try {
+                // ✅ Отправляем заявку через Web3Forms
+                const response = await fetch('https://api.web3forms.com/submit', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        access_key: 'e6375479-9bd3-4349-aab6-dfe0d322f82e',
+                        from_name: escapeHtml(formData.get('name')),
+                        email: escapeHtml(formData.get('email')),
+                        subject: '🎓 Новая заявка на запись - Vector School',
+                        message: `👤 Имя: ${escapeHtml(formData.get('name'))}\n📞 Тел: ${escapeHtml(formData.get('phone'))}\n📚 Предмет: ${escapeHtml(formData.get('subject') || '-')}\n🏫 Класс: ${escapeHtml(formData.get('grade') || '-')}\n🎯 Тип: ${escapeHtml(formData.get('lesson_type') || '-')}\n💬 Сообщение: ${escapeHtml(formData.get('message') || '-')}`,
+                        reply_to: escapeHtml(formData.get('email')),
+                        redirect: ''
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    messageDiv.innerHTML = '<p style="color: #2ecc71;">✅ Спасибо! Заявка отправлена. Мы свяжемся с вами в течение 2 часов.</p>';
                     this.reset();
-                } else { 
-                    throw new Error('Ошибка'); 
+                } else {
+                    throw new Error(data.message || 'Ошибка отправки');
                 }
-            })
-            .catch(error => {
-                messageDiv.innerHTML = '<p style="color: #e74c3c;">❌ Ошибка. Напишите в Telegram.</p>';
-            })
-            .finally(() => {
+            } catch (error) {
+                console.error('Ошибка отправки заявки:', error);
+                messageDiv.innerHTML = '<p style="color: #e74c3c;">❌ Ошибка при отправке. Попробуйте позже.</p>';
+            } finally {
                 submitBtn.textContent = 'Отправить заявку';
                 submitBtn.disabled = false;
                 submitBtn.style.backgroundColor = '#f39c12';
-            });
         });
     </script>
 </body>

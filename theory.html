@@ -24,6 +24,35 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.08);
             border-top: 8px solid #f39c12;
         }
+        #access-denied {
+            text-align: center;
+            padding: 60px 20px;
+            background: #fadbd8;
+            border-radius: 12px;
+            border: 2px solid #e74c3c;
+        }
+        #access-denied h2 {
+            color: #c0392b;
+            font-size: 1.8em;
+            margin-bottom: 15px;
+        }
+        #access-denied p {
+            color: #a93226;
+            font-size: 1.1em;
+            margin-bottom: 25px;
+        }
+        #access-denied a {
+            background: #c0392b;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 5px;
+            text-decoration: none;
+            display: inline-block;
+            font-weight: bold;
+        }
+        #access-denied a:hover {
+            background: #a93226;
+        }
         .header {
             text-align: center;
             margin-bottom: 40px;
@@ -149,6 +178,75 @@
             <p>Шпаргалка подготовлена для учеников Vector School. Копирование без разрешения запрещено.</p>
         </div>
     </div>
+
+    <script type="module">
+        // ✅ ЗАЩИТА: проверка авторизации и доступа к теории
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyD-8XnfY1Glrz8eSMM2MvlwVYoewzS9lQw",
+            authDomain: "vector-7122d.firebaseapp.com",
+            projectId: "vector-7122d",
+            storageBucket: "vector-7122d.firebasestorage.app",
+            messagingSenderId: "503217772379",
+            appId: "1:503217772379:web:8f184084be3dae96f96c7e",
+            measurementId: "G-LC1KDM7PE3"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // Вначале скроем содержимое
+        const container = document.querySelector('.container');
+        container.style.display = 'none';
+
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                // Не авторизован — показываем сообщение об отказе
+                showAccessDenied('Вам нужно войти в кабинет, чтобы видеть материалы.');
+                return;
+            }
+
+            try {
+                // Проверяем доступ в Firestore
+                const userDoc = await getDoc(doc(db, "users", user.uid));
+                if (!userDoc.exists()) {
+                    showAccessDenied('Ошибка: профиль не найден.');
+                    return;
+                }
+
+                const userData = userDoc.data();
+                if (userData.role === 'admin' || userData.theoryAccess === true) {
+                    // Доступ есть — показываем содержимое
+                    container.style.display = 'block';
+                } else {
+                    // Доступ закрыт
+                    showAccessDenied('📚 Доступ к этому материалу пока закрыт. Попроси преподавателя открыть его в твоём кабинете.');
+                }
+            } catch (error) {
+                console.error("Ошибка при проверке доступа:", error);
+                showAccessDenied('Ошибка при проверке доступа. Попробуй обновить страницу.');
+            }
+        });
+
+        function showAccessDenied(message) {
+            container.style.display = 'none';
+            const body = document.body;
+            const deniedDiv = document.createElement('div');
+            deniedDiv.id = 'access-denied';
+            deniedDiv.innerHTML = `
+                <div class="container" style="display: block;">
+                    <h2>🔒 Доступ ограничен</h2>
+                    <p>${message}</p>
+                    <a href="index.html">← Вернуться на главную</a>
+                </div>
+            `;
+            body.prepend(deniedDiv);
+        }
+    </script>
 
 </body>
 </html>
