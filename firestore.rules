@@ -20,20 +20,29 @@ service cloud.firestore {
       // Это запрещает сделать себя админом прямо при регистрации.
       allow create: if request.auth != null
         && request.auth.uid == userId
-        && request.resource.data.role == 'student';
+        && request.resource.data.role == 'student'
+        && request.resource.data.theoryAccess == false;
 
       // ОБНОВЛЯТЬ:
       //  - учитель (admin) может менять всё (прогресс, уроки, доступ к теории);
-      //  - сам ученик может менять свои данные (например, сдавать ДЗ),
-      //    НО не может сам себе поднять роль до admin или открыть теорию.
+      //  - сам ученик может менять ТОЛЬКО личные данные (name, avatar, grade, subject),
+      //    НЕ может менять role, theoryAccess, progress, lessons
       allow update: if isAdmin()
         || (request.auth != null
             && request.auth.uid == userId
-            && request.resource.data.role == resource.data.role
-            && request.resource.data.theoryAccess == resource.data.theoryAccess);
+            && request.resource.data.role == resource.data.role  // ✅ Роль не меняется
+            && request.resource.data.theoryAccess == resource.data.theoryAccess  // ✅ Доступ не меняется
+            && request.resource.data.progress == resource.data.progress  // ✅ Прогресс не меняется
+            && request.resource.data.lessons == resource.data.lessons);  // ✅ Уроки не меняются
 
       // УДАЛЯТЬ: только учитель
       allow delete: if isAdmin();
+    }
+
+    // Audit logs для отслеживания подозрительной активности
+    match /audit_logs/{logId} {
+      allow read: if request.auth != null && isAdmin();
+      allow create: if request.auth != null; // Каждый может логировать события
     }
 
     // Всё остальное по умолчанию закрыто
