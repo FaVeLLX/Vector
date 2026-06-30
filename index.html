@@ -543,7 +543,7 @@
 
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, collection, getDocs, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, getDocs, updateDoc, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyD-8XnfY1Glrz8eSMM2MvlwVYoewzS9lQw",
@@ -558,6 +558,58 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
+
+        // ✅ Защита от XSS
+        function escapeHtml(text) {
+            const map = {'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;'};
+            return text.replace(/[&<>"']/g, m => map[m]);
+        }
+
+        // ✅ Валидация email
+        function isValidEmail(email) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        }
+
+        // ✅ Rate limiting для логина
+        function checkLoginRateLimit(email) {
+            const key = 'login_attempts_' + email;
+            const attempts = JSON.parse(localStorage.getItem(key) || '[]');
+            const now = Date.now();
+            const recentAttempts = attempts.filter(t => now - t < 15 * 60 * 1000); // 15 минут
+            
+            if (recentAttempts.length >= 5) return false;
+            recentAttempts.push(now);
+            localStorage.setItem(key, JSON.stringify(recentAttempts));
+            return true;
+        }
+
+        // ✅ Rate limiting для форм
+        function canSubmitForm(formId) {
+            const key = 'form_submit_' + formId;
+            const submissions = JSON.parse(localStorage.getItem(key) || '[]');
+            const now = Date.now();
+            const recentSubmissions = submissions.filter(t => now - t < 60 * 1000); // 1 минута
+            
+            if (recentSubmissions.length >= 3) return false;
+            recentSubmissions.push(now);
+            localStorage.setItem(key, JSON.stringify(recentSubmissions));
+            return true;
+        }
+
+        // ✅ Логирование попыток входа
+        async function logAuthAttempt(email, success) {
+            try {
+                await addDoc(collection(db, 'audit_logs'), {
+                    type: 'auth_attempt',
+                    email: email,
+                    success: success,
+                    timestamp: new Date(),
+                    userAgent: navigator.userAgent
+                });
+            } catch (e) {
+                console.error('Ошибка логирования:', e);
+            }
+        }
 
         const authModal = document.getElementById("auth-modal");
         const authBtn = document.getElementById("auth-btn");
@@ -664,27 +716,23 @@
                         grade: "", subject: "", avatar: "", lessonsLeft: 0, registeredAt: new Date().toISOString()
                     });
 
-                    // ✅ Отправляем email о регистрации через Web3Forms
+                    // ✅ Отправляем уведомление о регистрации в Telegram
                     try {
-                        await fetch('https://api.web3forms.com/submit', {
+                        const regMessage = `🚀 <b>НОВАЯ РЕГИСТРАЦИЯ</b>\n\n👤 <b>Имя:</b> ${escapeHtml(name)}\n📧 <b>Email:</b> ${escapeHtml(email)}`;
+                        
+                        await fetch('https://api.telegram.org/bot8340993627:AAEu7ax6CSN643NTi-mwerzSzGV1I8Gt42U/sendMessage', {
                             method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'Accept': 'application/json'
-                            },
+                            headers: {'Content-Type': 'application/json'},
                             body: JSON.stringify({
-                                access_key: 'e6375479-9bd3-4349-aab6-dfe0d322f82e',
-                                from_name: 'Vector School Bot',
-                                email: 'vectorschoolsupp@mail.ru',
-                                subject: '🚀 Новая регистрация - ' + escapeHtml(name),
-                                message: `👤 Имя: ${escapeHtml(name)}\n📧 Email: ${escapeHtml(email)}`,
-                                reply_to: escapeHtml(email),
-                                redirect: ''
+                                chat_id: -1003612200808,
+                                message_thread_id: 2,
+                                text: regMessage,
+                                parse_mode: 'HTML'
                             })
                         });
                     } catch (err) {
-                        console.error("Ошибка отправки email регистрации:", err);
-                        // Не блокируем регистрацию если email недоступен
+                        console.error("Ошибка отправки регистрации в Telegram:", err);
+                        // Не блокируем регистрацию если Telegram недоступен
                     }
                     
                     await logAuthAttempt(email, true);
@@ -1344,31 +1392,25 @@
             messageDiv.innerHTML = '';
             
             try {
-                // ✅ Отправляем заявку через Web3Forms
-                const response = await fetch('https://api.web3forms.com/submit', {
+                // ✅ Отправляем заявку в Telegram
+                const telegramMessage = `🎓 <b>НОВАЯ ЗАЯВКА НА УРОК</b>\n\n👤 <b>Имя:</b> ${escapeHtml(formData.get('name'))}\n📧 <b>Email:</b> ${escapeHtml(formData.get('email'))}\n📞 <b>Телефон:</b> ${escapeHtml(formData.get('phone'))}\n📚 <b>Предмет:</b> ${escapeHtml(formData.get('subject') || '-')}\n🏫 <b>Класс:</b> ${escapeHtml(formData.get('grade') || '-')}\n🎯 <b>Тип урока:</b> ${escapeHtml(formData.get('lesson_type') || '-')}\n💬 <b>Сообщение:</b> ${escapeHtml(formData.get('message') || '-')}`;
+                
+                const response = await fetch('https://api.telegram.org/bot8340993627:AAEu7ax6CSN643NTi-mwerzSzGV1I8Gt42U/sendMessage', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    },
+                    headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({
-                        access_key: 'e6375479-9bd3-4349-aab6-dfe0d322f82e',
-                        from_name: escapeHtml(formData.get('name')),
-                        email: escapeHtml(formData.get('email')),
-                        subject: '🎓 Новая заявка на запись - Vector School',
-                        message: `👤 Имя: ${escapeHtml(formData.get('name'))}\n📞 Тел: ${escapeHtml(formData.get('phone'))}\n📚 Предмет: ${escapeHtml(formData.get('subject') || '-')}\n🏫 Класс: ${escapeHtml(formData.get('grade') || '-')}\n🎯 Тип: ${escapeHtml(formData.get('lesson_type') || '-')}\n💬 Сообщение: ${escapeHtml(formData.get('message') || '-')}`,
-                        reply_to: escapeHtml(formData.get('email')),
-                        redirect: ''
+                        chat_id: -1003612200808,
+                        message_thread_id: 3,
+                        text: telegramMessage,
+                        parse_mode: 'HTML'
                     })
                 });
 
-                const data = await response.json();
-                
-                if (data.success) {
+                if (response.ok) {
                     messageDiv.innerHTML = '<p style="color: #2ecc71;">✅ Спасибо! Заявка отправлена. Мы свяжемся с вами в течение 2 часов.</p>';
                     this.reset();
                 } else {
-                    throw new Error(data.message || 'Ошибка отправки');
+                    throw new Error('Ошибка отправки в Telegram');
                 }
             } catch (error) {
                 console.error('Ошибка отправки заявки:', error);
@@ -1377,6 +1419,7 @@
                 submitBtn.textContent = 'Отправить заявку';
                 submitBtn.disabled = false;
                 submitBtn.style.backgroundColor = '#f39c12';
+            }
         });
     </script>
 </body>
