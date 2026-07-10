@@ -1,48 +1,35 @@
 const functions = require("firebase-functions");
 
-exports.sendTelegramMessage = functions.https.onRequest(async (req, res) => {
-    // Настройки CORS, чтобы ваш сайт мог свободно отправлять данные
-    res.set('Access-Control-Allow-Origin', '*');
-    res.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-    res.set('Access-Control-Allow-Headers', 'Content-Type');
+exports.sendBookingNotification = functions.https.onCall(async (data, context) => {
+    const token = process.env.TELEGRAM_TOKEN;
+    const chatId = process.env.TELEGRAM_CHAT_ID;
 
-    // Обработка предварительного запроса от браузера
-    if (req.method === 'OPTIONS') {
-        res.status(204).send('');
-        return;
+    if (!token || !chatId) {
+        throw new functions.https.HttpsError('failed-precondition', 'Telegram не настроен на сервере');
     }
 
-    try {
-        // Достаем ключи из нашего файла .env
-        const token = process.env.TELEGRAM_TOKEN;
-        const chatId = process.env.TELEGRAM_CHAT_ID;
-        
-        // Получаем данные, которые пришли из формы на сайте
-        // (Предполагаем, что в форме есть поля name, phone и message)
-        const { name, phone, message } = req.body;
-        
-        // Формируем красивый текст для Telegram
-        const text = `🎉 Новая заявка с сайта!\n\n👤 Имя: ${name || 'Не указано'}\n📞 Телефон: ${phone || 'Не указан'}\n💬 Сообщение: ${message || 'Нет'}`;
+    const name = (data?.name || 'Не указано').toString().trim();
+    const phone = (data?.phone || 'Не указан').toString().trim();
+    const email = (data?.email || 'Не указан').toString().trim();
+    const subject = (data?.subject || '-').toString().trim();
+    const grade = (data?.grade || '-').toString().trim();
+    const lessonType = (data?.lesson_type || '-').toString().trim();
+    const message = (data?.message || 'Нет').toString().trim();
 
-        // Отправляем запрос напрямую на серверы Telegram (работает в Node.js 18+)
-        const response = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                chat_id: chatId,
-                text: text
-            })
-        });
+    const text = `🎉 Новая заявка с сайта!\n\n👤 Имя: ${name}\n📧 Email: ${email}\n📞 Телефон: ${phone}\n📚 Предмет: ${subject}\n🏫 Класс: ${grade}\n🎯 Тип: ${lessonType}\n💬 Сообщение: ${message}`;
 
-        if (!response.ok) {
-            throw new Error('Ошибка при отправке в Telegram');
-        }
+    const response = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            chat_id: chatId,
+            text: text
+        })
+    });
 
-        // Отвечаем сайту, что всё прошло успешно
-        res.status(200).json({ success: true, message: "Заявка успешно отправлена!" });
-        
-    } catch (error) {
-        console.error("Ошибка:", error);
-        res.status(500).json({ success: false, error: "Внутренняя ошибка сервера" });
+    if (!response.ok) {
+        throw new functions.https.HttpsError('internal', 'Ошибка при отправке в Telegram');
     }
+
+    return { success: true };
 });
