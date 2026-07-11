@@ -559,53 +559,48 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        const TELEGRAM_TOKEN = '8340993627:AAEu7ax6CSN643NTi-mwerzSzGV1I8Gt42U';
-        const TELEGRAM_CHAT_ID = '-1003612200808';
-
-        async function sendTelegramMessage(chatId, text, messageThreadId) {
-            const payload = {
-                chat_id: chatId,
-                text: text
-            };
-
-            if (messageThreadId !== undefined) {
-                payload.message_thread_id = messageThreadId;
-            }
-
-            const response = await fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
+        window.sendBookingNotification = async function(data) {
+            const response = await fetch("/.netlify/functions/sendBookingNotification", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    name: (data?.name || 'Не указано').trim(),
+                    phone: (data?.phone || 'Не указан').trim(),
+                    email: (data?.email || 'Не указан').trim(),
+                    subject: (data?.subject || '-').trim(),
+                    grade: (data?.grade || '-').trim(),
+                    lesson_type: (data?.lesson_type || '-').trim(),
+                    message: (data?.message || 'Нет').trim()
+                })
             });
 
-            const body = await response.json().catch(() => null);
+            const body = await response.text();
             if (!response.ok) {
-                throw new Error(body?.description || `Telegram error ${response.status}`);
+                console.error('Ошибка отправки заявки:', body);
+                throw new Error(body || 'Не удалось отправить заявку. Попробуйте позже.');
             }
 
-            return { data: { success: true } };
-        }
-
-        window.sendBookingNotification = async function(data) {
-            const name = (data?.name || 'Не указано').trim();
-            const phone = (data?.phone || 'Не указан').trim();
-            const email = (data?.email || 'Не указан').trim();
-            const subject = (data?.subject || '-').trim();
-            const grade = (data?.grade || '-').trim();
-            const lessonType = (data?.lesson_type || '-').trim();
-            const message = (data?.message || 'Нет').trim();
-
-            const text = `🎉 Новая заявка с сайта!\n\n👤 Имя: ${name}\n📧 Email: ${email}\n📞 Телефон: ${phone}\n📚 Предмет: ${subject}\n🏫 Класс: ${grade}\n🎯 Тип: ${lessonType}\n💬 Сообщение: ${message}`;
-            return await sendTelegramMessage(TELEGRAM_CHAT_ID, text, 3);
+            return JSON.parse(body);
         };
 
         window.sendRegistrationNotification = async function(data) {
-            const name = (data?.name || 'Не указано').trim();
-            const email = (data?.email || 'Не указан').trim();
-            const userId = (data?.userId || '-').trim();
+            const response = await fetch("/.netlify/functions/sendRegistrationNotification", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    name: (data?.name || 'Не указано').trim(),
+                    email: (data?.email || 'Не указан').trim(),
+                    userId: (data?.userId || '-').trim()
+                })
+            });
 
-            const text = `🆕 Новая регистрация на сайте!\n\n👤 Имя: ${name}\n📧 Email: ${email}\n🆔 UID: ${userId}`;
-            return await sendTelegramMessage(TELEGRAM_CHAT_ID, text, 2);
+            const body = await response.text();
+            if (!response.ok) {
+                console.error('Ошибка отправки регистрации:', body);
+                throw new Error(body || 'Не удалось отправить уведомление о регистрации. Попробуйте позже.');
+            }
+
+            return JSON.parse(body);
         };
 
         const authModal = document.getElementById("auth-modal");
