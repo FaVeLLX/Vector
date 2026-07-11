@@ -574,13 +574,20 @@
                 })
             });
 
-            const body = await response.text();
-            if (!response.ok) {
-                console.error('Ошибка отправки заявки:', body);
-                throw new Error(body || 'Не удалось отправить заявку. Попробуйте позже.');
+            const text = await response.text();
+            let result = null;
+            try {
+                result = JSON.parse(text);
+            } catch (err) {
+                result = null;
             }
 
-            return JSON.parse(body);
+            if (!response.ok) {
+                console.error('Ошибка отправки заявки:', text);
+                throw new Error(result?.error || text || 'Не удалось отправить заявку. Попробуйте позже.');
+            }
+
+            return result || { success: true };
         };
 
         window.sendRegistrationNotification = async function(data) {
@@ -594,13 +601,20 @@
                 })
             });
 
-            const body = await response.text();
-            if (!response.ok) {
-                console.error('Ошибка отправки регистрации:', body);
-                throw new Error(body || 'Не удалось отправить уведомление о регистрации. Попробуйте позже.');
+            const text = await response.text();
+            let result = null;
+            try {
+                result = JSON.parse(text);
+            } catch (err) {
+                result = null;
             }
 
-            return JSON.parse(body);
+            if (!response.ok) {
+                console.error('Ошибка отправки регистрации:', text);
+                throw new Error(result?.error || text || 'Не удалось отправить уведомление о регистрации. Попробуйте позже.');
+            }
+
+            return result || { success: true };
         };
 
         const authModal = document.getElementById("auth-modal");
