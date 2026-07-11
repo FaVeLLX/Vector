@@ -1386,11 +1386,11 @@
                     message: formData.get('message') || ''
                 });
 
-                if (result && result.data && result.data.success) {
+                if (result && result.success) {
                     messageDiv.innerHTML = '<p style="color: #2ecc71;">✅ Спасибо! Заявка отправлена. Мы свяжемся с вами в течение 2 часов.</p>';
                     this.reset();
                 } else {
-                    throw new Error(result?.data?.error || 'Ошибка отправки');
+                    throw new Error(result?.error || 'Ошибка отправки');
                 }
             } catch (error) {
                 console.error('Ошибка отправки заявки:', error);
