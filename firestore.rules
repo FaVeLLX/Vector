@@ -3,49 +3,92 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Проверка: текущий пользователь — учитель (admin)?
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function getMyUser() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid));
+    }
+
     function isAdmin() {
-      return request.auth != null
+      return isAuthenticated()
         && exists(/databases/$(database)/documents/users/$(request.auth.uid))
-        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+        && getMyUser().data.role == 'admin';
+    }
+
+    function isValidUserDoc(data) {
+      return data.keys().hasOnly([
+        'name', 'email', 'role', 'progress', 'theoryAccess', 'lessons',
+        'hasNewLesson', 'hasNewHomework', 'grade', 'subject', 'avatar',
+        'lessonsLeft', 'registeredAt'
+      ])
+      && data.name is string
+      && data.email is string
+      && data.role in ['student', 'admin']
+      && data.progress is int
+      && data.progress >= 0
+      && data.progress <= 100
+      && data.theoryAccess is bool
+      && data.lessons is list
+      && data.hasNewLesson is bool
+      && data.hasNewHomework is bool
+      && data.grade is string
+      && data.subject is string
+      && data.avatar is string
+      && data.lessonsLeft is int
+      && data.lessonsLeft >= 0
+      && data.registeredAt is string;
+    }
+
+    function isValidStudentCreate(data) {
+      return isValidUserDoc(data)
+        && data.role == 'student'
+        && data.theoryAccess == false
+        && data.progress == 0
+        && data.lessons.size() == 0
+        && data.hasNewLesson == false
+        && data.hasNewHomework == false
+        && data.lessonsLeft == 0;
+    }
+
+    function isStudentUpdateAllowed() {
+      return request.resource.data.role == resource.data.role
+        && request.resource.data.theoryAccess == resource.data.theoryAccess
+        && request.resource.data.progress == resource.data.progress
+        && request.resource.data.lessons == resource.data.lessons
+        && request.resource.data.hasNewLesson == resource.data.hasNewLesson
+        && request.resource.data.hasNewHomework == resource.data.hasNewHomework
+        && request.resource.data.lessonsLeft == resource.data.lessonsLeft
+        && request.resource.data.email == resource.data.email
+        && request.resource.data.registeredAt == resource.data.registeredAt
+        && request.resource.data.keys().hasOnly([
+          'name', 'email', 'role', 'progress', 'theoryAccess', 'lessons',
+          'hasNewLesson', 'hasNewHomework', 'grade', 'subject', 'avatar',
+          'lessonsLeft', 'registeredAt'
+        ]);
     }
 
     match /users/{userId} {
+      allow read: if isAuthenticated() && (request.auth.uid == userId || isAdmin());
 
-      // ЧИТАТЬ: свой профиль — сам ученик; все профили — только учитель
-      allow read: if request.auth != null
-        && (request.auth.uid == userId || isAdmin());
-
-      // СОЗДАВАТЬ (регистрация): только сам за себя и только с ролью "student".
-      // Это запрещает сделать себя админом прямо при регистрации.
-      allow create: if request.auth != null
+      allow create: if isAuthenticated()
         && request.auth.uid == userId
-        && request.resource.data.role == 'student'
-        && request.resource.data.theoryAccess == false;
+        && isValidStudentCreate(request.resource.data);
 
-      // ОБНОВЛЯТЬ:
-      //  - учитель (admin) может менять всё (прогресс, уроки, доступ к теории);
-      //  - сам ученик может менять ТОЛЬКО личные данные (name, avatar, grade, subject),
-      //    НЕ может менять role, theoryAccess, progress, lessons
       allow update: if isAdmin()
-        || (request.auth != null
+        || (isAuthenticated()
             && request.auth.uid == userId
-            && request.resource.data.role == resource.data.role  // ✅ Роль не меняется
-            && request.resource.data.theoryAccess == resource.data.theoryAccess  // ✅ Доступ не меняется
-            && request.resource.data.progress == resource.data.progress  // ✅ Прогресс не меняется
-            && request.resource.data.lessons == resource.data.lessons);  // ✅ Уроки не меняются
+            && isStudentUpdateAllowed());
 
-      // УДАЛЯТЬ: только учитель
       allow delete: if isAdmin();
     }
 
-    // Audit logs для отслеживания подозрительной активности
     match /audit_logs/{logId} {
-      allow read: if request.auth != null && isAdmin();
-      allow create: if request.auth != null; // Каждый может логировать события
+      allow create: if isAuthenticated();
+      allow read: if isAdmin();
     }
 
-    // Всё остальное по умолчанию закрыто
     match /{document=**} {
       allow read, write: if false;
     }
