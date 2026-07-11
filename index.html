@@ -575,19 +575,15 @@
             });
 
             const text = await response.text();
-            let result = null;
-            try {
-                result = JSON.parse(text);
-            } catch (err) {
-                result = null;
-            }
-
             if (!response.ok) {
-                console.error('Ошибка отправки заявки:', text);
-                throw new Error(result?.error || text || 'Не удалось отправить заявку. Попробуйте позже.');
+                let errorResult = null;
+                try { errorResult = JSON.parse(text); } catch (err) {}
+                const errorMessage = errorResult?.error || text || 'Не удалось отправить заявку. Попробуйте позже.';
+                console.error('Ошибка отправки заявки:', errorMessage);
+                throw new Error(errorMessage);
             }
 
-            return result || { success: true };
+            return { success: true };
         };
 
         window.sendRegistrationNotification = async function(data) {
@@ -602,19 +598,15 @@
             });
 
             const text = await response.text();
-            let result = null;
-            try {
-                result = JSON.parse(text);
-            } catch (err) {
-                result = null;
-            }
-
             if (!response.ok) {
-                console.error('Ошибка отправки регистрации:', text);
-                throw new Error(result?.error || text || 'Не удалось отправить уведомление о регистрации. Попробуйте позже.');
+                let errorResult = null;
+                try { errorResult = JSON.parse(text); } catch (err) {}
+                const errorMessage = errorResult?.error || text || 'Не удалось отправить уведомление о регистрации. Попробуйте позже.';
+                console.error('Ошибка отправки регистрации:', errorMessage);
+                throw new Error(errorMessage);
             }
 
-            return result || { success: true };
+            return { success: true };
         };
 
         const authModal = document.getElementById("auth-modal");
