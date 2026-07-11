@@ -13,7 +13,6 @@
     <link rel="stylesheet" href="style.css">
     
 
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     
     <style>
@@ -541,6 +540,10 @@
             }
         };
 
+        window.isAdminUser = function(userData) {
+            return userData && (userData.role === 'admin' || userData.role === 'teacher');
+        };
+
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc, collection, getDocs, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -638,7 +641,15 @@
 
         authBtn.onclick = () => { 
             if (!auth.currentUser) {
-                authModal.style.display = "block"; 
+                authModal.style.display = "block";
+                return;
+            }
+            const admin = document.getElementById('admin-container');
+            const lk = document.getElementById('lk-container');
+            if (admin && admin.style.display === 'block') {
+                admin.scrollIntoView({ behavior: 'smooth' });
+            } else if (lk && lk.style.display === 'block') {
+                lk.scrollIntoView({ behavior: 'smooth' });
             }
         };
 
@@ -770,7 +781,7 @@
             try {
                 const snap = await getDoc(doc(db, "users", user.uid));
                 const data = snap.exists() ? snap.data() : {};
-                if (data.role === 'admin' || data.theoryAccess) {
+                if (isAdminUser(data) || data.theoryAccess) {
                     window.open('theory.html', '_blank');   // доступ есть — открываем шпаргалку
                 } else {
                     alert("📚 Доступ к теории пока закрыт. Попроси преподавателя открыть его в твоём кабинете 🙂");
@@ -1251,7 +1262,7 @@
                     if (docSnap.exists()) {
                         const userData = docSnap.data();
                         
-                        if (userData.role === 'admin') {
+                        if (isAdminUser(userData)) {
                             main.style.display = 'none'; 
                             lk.style.display = 'none'; 
                             admin.style.display = 'block'; 
