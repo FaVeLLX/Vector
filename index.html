@@ -1390,7 +1390,7 @@
             messageDiv.innerHTML = '';
 
             try {
-                const result = await sendBookingNotification({
+                await sendBookingNotification({
                     name: formData.get('name')?.trim() || '',
                     email: formData.get('email')?.trim() || '',
                     phone: formData.get('phone')?.trim() || '',
@@ -1400,12 +1400,8 @@
                     message: formData.get('message') || ''
                 });
 
-                if (result && result.success) {
-                    messageDiv.innerHTML = '<p style="color: #2ecc71;">✅ Спасибо! Заявка отправлена. Мы свяжемся с вами в течение 2 часов.</p>';
-                    this.reset();
-                } else {
-                    throw new Error(result?.error || 'Ошибка отправки');
-                }
+                messageDiv.innerHTML = '<p style="color: #2ecc71;">✅ Спасибо! Заявка отправлена. Мы свяжемся с вами в течение 2 часов.</p>';
+                this.reset();
             } catch (error) {
                 console.error('Ошибка отправки заявки:', error);
                 const message = error?.details || error?.message || error?.code || 'Ошибка при отправке. Попробуйте позже.';
