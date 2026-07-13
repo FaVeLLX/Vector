@@ -58,12 +58,13 @@
             </div>
             <nav>
                 <ul>
-                    <li><a href="#services">Услуги</a></li>
-                    <li><a href="#about">О школе</a></li>
-                    <li><a href="#reviews">Отзывы</a></li>
-                    <li><a href="#contact">Контакты</a></li>
+                    <li><a href="#services" onclick="handleNavClick(event, 'services')">Услуги</a></li>
+                    <li><a href="#about" onclick="handleNavClick(event, 'about')">О школе</a></li>
+                    <li><a href="#reviews" onclick="handleNavClick(event, 'reviews')">Отзывы</a></li>
+                    <li><a href="#contact" onclick="handleNavClick(event, 'contact')">Контакты</a></li>
                     <li><a href="#" onclick="handleTheoryClick(event)" style="color: #000000; font-weight: bold;">Теория 📚</a></li>
                     <li><button id="auth-btn" class="auth-nav-btn">Войти</button></li>
+                    <li><button id="profile-badge" class="profile-badge" style="display:none;">👤</button></li>
                 </ul>
             </nav>
         </div>
@@ -410,7 +411,7 @@
         };
 
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc, collection, getDocs, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -425,6 +426,9 @@
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
+        setPersistence(auth, browserLocalPersistence).catch((error) => {
+            console.warn('Не удалось установить локальное хранение авторизации:', error);
+        });
         const db = getFirestore(app);
 
         window.sendBookingNotification = async function(data) {
@@ -490,8 +494,46 @@
         const adminContainer = document.getElementById("admin-container");
         const authForm = document.getElementById("auth-form");
         const authError = document.getElementById("auth-error");
+        const profileBadge = document.getElementById("profile-badge");
         
         let isLoginMode = true;
+        let currentUserData = null;
+
+        window.showMainPage = function() {
+            if (mainContent) mainContent.style.display = 'block';
+            if (lkContainer) lkContainer.style.display = 'none';
+            if (adminContainer) adminContainer.style.display = 'none';
+        };
+
+        window.showStudentCabinet = function() {
+            if (mainContent) mainContent.style.display = 'none';
+            if (adminContainer) adminContainer.style.display = 'none';
+            if (lkContainer) lkContainer.style.display = 'block';
+        };
+
+        window.showAdminPanel = function() {
+            if (mainContent) mainContent.style.display = 'none';
+            if (lkContainer) lkContainer.style.display = 'none';
+            if (adminContainer) adminContainer.style.display = 'block';
+        };
+
+        window.showUserProfile = function() {
+            if (!auth.currentUser) return;
+            if (currentUserData && isAdminUser(currentUserData)) {
+                window.showAdminPanel();
+            } else {
+                window.showStudentCabinet();
+            }
+        };
+
+        window.handleNavClick = function(event, sectionId) {
+            event.preventDefault();
+            window.showMainPage();
+            const section = document.getElementById(sectionId);
+            if (section) {
+                section.scrollIntoView({ behavior: 'smooth' });
+            }
+        };
 
         window.switchAuthTab = function(mode) {
             isLoginMode = mode === 'login';
@@ -509,12 +551,10 @@
                 authModal.style.display = "block";
                 return;
             }
-            const admin = document.getElementById('admin-container');
-            const lk = document.getElementById('lk-container');
-            if (admin && admin.style.display === 'block') {
-                admin.scrollIntoView({ behavior: 'smooth' });
-            } else if (lk && lk.style.display === 'block') {
-                lk.scrollIntoView({ behavior: 'smooth' });
+            if (currentUserData && isAdminUser(currentUserData)) {
+                window.showAdminPanel();
+            } else {
+                window.showStudentCabinet();
             }
         };
 
@@ -1126,7 +1166,14 @@
                     const docSnap = await getDoc(doc(db, "users", user.uid));
                     if (docSnap.exists()) {
                         const userData = docSnap.data();
-                        
+                        currentUserData = userData;
+                        const profileName = userData.name || user.email.split('@')[0] || 'Профиль';
+                        const profileAvatar = userData.avatar || profileName.trim().charAt(0).toUpperCase() || '👤';
+                        if (profileBadge) {
+                            profileBadge.textContent = profileAvatar;
+                            profileBadge.title = profileName;
+                            profileBadge.style.display = 'inline-flex';
+                        }
                         if (isAdminUser(userData)) {
                             main.style.display = 'none'; 
                             lk.style.display = 'none'; 
@@ -1143,6 +1190,8 @@
                     console.error(e); 
                 }
             } else {
+                currentUserData = null;
+                if (profileBadge) profileBadge.style.display = 'none';
                 main.style.display = 'block'; 
                 lk.style.display = 'none'; 
                 if(admin) admin.style.display = 'none'; 
