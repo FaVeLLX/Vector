@@ -83,10 +83,10 @@
                 <h2>Форматы занятий</h2>
                 
                 <div class="tabs-container">
-                    <button class="tab-btn active" onclick="openTab(event, 'math')">📐 Математика</button>
+                    <button class="tab-btn main-tab-btn active" onclick="openTab(event, 'math')">📐 Математика</button>
                 </div>
 
-                <div id="math" class="tab-content" style="display: block;">
+                <div id="math" class="tab-content main-tab-content" style="display: block;">
                     <h3 class="category-title">📚 Математика для школьников</h3>
                     <div class="services-grid">
                         <div class="service-card">
@@ -1182,11 +1182,11 @@
 
         function openTab(evt, subjectName) {
             var i, tabcontent, tablinks;
-            tabcontent = document.getElementsByClassName("tab-content");
+            tabcontent = document.getElementsByClassName("main-tab-content");
             for (i = 0; i < tabcontent.length; i++) {
                 tabcontent[i].style.display = "none";
             }
-            tablinks = document.getElementsByClassName("tab-btn");
+            tablinks = document.getElementsByClassName("main-tab-btn");
             for (i = 0; i < tablinks.length; i++) {
                 tablinks[i].className = tablinks[i].className.replace(" active", "");
             }
