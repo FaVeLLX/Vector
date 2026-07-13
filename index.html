@@ -48,23 +48,27 @@
         @media (max-width:700px){ .lk-grid { grid-template-columns:1fr; } }
     </style>
 </head>
-<body>
-
+<body id="top">
     <header>
         <div class="container">
-            <div class="logo">
+            <a href="#top" class="logo" onclick="handleLogoClick(event)">
                  <img src="logo.png" alt="Логотип Vector" class="logo-icon">
                  <span>VECTOR</span>
-            </div>
+            </a>
             <nav>
                 <ul>
                     <li><a href="#services" onclick="handleNavClick(event, 'services')">Услуги</a></li>
                     <li><a href="#about" onclick="handleNavClick(event, 'about')">О школе</a></li>
                     <li><a href="#reviews" onclick="handleNavClick(event, 'reviews')">Отзывы</a></li>
                     <li><a href="#contact" onclick="handleNavClick(event, 'contact')">Контакты</a></li>
-                    <li><a href="#" onclick="handleTheoryClick(event)" style="color: #000000; font-weight: bold;">Теория 📚</a></li>
+                    <li><a href="#" class="nav-theory-link" onclick="handleTheoryClick(event)">Теория 📚</a></li>
+                    <li>
+                        <label class="theme-switch" title="Тёмная тема">
+                            <input id="theme-toggle-checkbox" type="checkbox" aria-label="Переключить тёмную тему" onchange="toggleTheme()">
+                            <span class="theme-slider"></span>
+                        </label>
+                    </li>
                     <li><button id="auth-btn" class="auth-nav-btn">Войти</button></li>
-                    <li><button id="profile-badge" class="profile-badge" style="display:none;">👤</button></li>
                 </ul>
             </nav>
         </div>
@@ -151,8 +155,8 @@
                         
                         <div class="review-slide">
                             <div class="review">
-                                <blockquote>"Честно, я вообще не понимал геометрию. В школе учительница просто диктовала учебник. А тут Макс объяснил всё буквально на пальцах за пару занятий. ОГЭ сдал на 5, сам в шоке!"</blockquote>
-                                <cite>— Кирилл, 9 класс</cite>
+                                <blockquote>"Занимаемся с Максимом около года, математика, русский язык. Сын у меня сложный подросток не совсеми идёт на контакт, Максим создал дружескую атмосферу с ребенком, нашел к нему подход и сейчас занимаются активно и с удовольствием. Знания значительно стали лучше, контрольные пишем на 5 и 4, самое главное у сына появилось понимания материала, самооценки и отношения к своим возможностям, что  влияет на мотивацию в учёбе. Максим профессионал в своем деле, будем продолжать заниматься дальше!!!"</blockquote>
+                                <cite>— Екатерина, мама шестиклассника</cite>
                             </div>
                         </div>
 
@@ -165,15 +169,15 @@
 
                         <div class="review-slide">
                             <div class="review">
-                                <blockquote>"Спасибо за подготовку к ОГЭ по математике — я разобрал все типы заданий и научился решать их без паники. В итоге набрал высокий балл."</blockquote>
-                                <cite>— Алина, 11 класс</cite>
+                                <blockquote>"Лучший, иначе бы скажешь. Подтянул математику буквально с нуля и я сдала математику на заветную четвёрку! Кто планирует заниматься, обязательно на то как преподаёт Максим"</blockquote>
+                                <cite>— Наталия, 11 класс</cite>
                             </div>
                         </div>
 
                         <div class="review-slide">
                             <div class="review">
-                                <blockquote>"Сыну наконец-то стало интересно учиться. Раньше домашку делали со скандалами, теперь сам садится. Оценки исправили с тройки на твердую четверку за четверть."</blockquote>
-                                <cite>— Елена Викторовна, мама семиклассника</cite>
+                                <blockquote>"Готовился с Максимом к ЕГЭ про профильной математике, очень понравились занятия, все было понятно и приятно объяснено, и с 0 баллов за пробники в мае 10 класса, добились 76 на ЕГЭ, очень рекомендую!!"</blockquote>
+                                <cite>— Дмитрий, 11 класс</cite>
                             </div>
                         </div>
 
@@ -353,7 +357,7 @@
 
     <footer>
         <div class="container">
-            <p>&copy; 2025 Vector School. Все права защищены.</p>
+            <p>&copy; 2026 Vector School. Все права защищены.</p>
         </div>
     </footer>
 
@@ -494,7 +498,6 @@
         const adminContainer = document.getElementById("admin-container");
         const authForm = document.getElementById("auth-form");
         const authError = document.getElementById("auth-error");
-        const profileBadge = document.getElementById("profile-badge");
         
         let isLoginMode = true;
         let currentUserData = null;
@@ -534,6 +537,39 @@
                 section.scrollIntoView({ behavior: 'smooth' });
             }
         };
+
+        window.handleLogoClick = function(event) {
+            event.preventDefault();
+            window.showMainPage();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+
+        window.applyTheme = function(theme) {
+            const body = document.body;
+            if (theme === 'dark') {
+                body.classList.add('dark-theme');
+            } else {
+                body.classList.remove('dark-theme');
+            }
+            localStorage.setItem('site-theme', theme);
+            const toggle = document.getElementById('theme-toggle-checkbox');
+            if (toggle) toggle.checked = theme === 'dark';
+        };
+
+        window.initTheme = function() {
+            const saved = localStorage.getItem('site-theme');
+            const defaultTheme = (saved === 'dark' || saved === 'light') ? saved
+                : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            window.applyTheme(defaultTheme);
+        };
+
+        window.toggleTheme = function() {
+            const toggle = document.getElementById('theme-toggle-checkbox');
+            if (!toggle) return;
+            window.applyTheme(toggle.checked ? 'dark' : 'light');
+        };
+
+        window.initTheme();
 
         window.switchAuthTab = function(mode) {
             isLoginMode = mode === 'login';
