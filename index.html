@@ -416,8 +416,7 @@
 
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, collection, getDocs, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
+        import { getFirestore, doc, setDoc, getDoc, collection, getDocs, updateDoc, addDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
         const firebaseConfig = {
             apiKey: "AIzaSyD-8XnfY1Glrz8eSMM2MvlwVYoewzS9lQw",
             authDomain: "vector-7122d.firebaseapp.com",
@@ -1195,6 +1194,7 @@
             const main = document.getElementById('main-content');
             const lk = document.getElementById('lk-container');
             const admin = document.getElementById('admin-container');
+            const profileBadge = document.getElementById('profile-badge');
 
             if (user) {
                 document.getElementById('auth-btn').textContent = 'В кабинет';
