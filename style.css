@@ -807,7 +807,7 @@ main section { padding: 60px 0; }
 .about { background-color: #fff; }
 .about p { max-width: 800px; margin: 0 auto; text-align: center; font-size: 1.1em; }
 
-.review { background: #fff; padding: 25px; border-left: 5px solid #3498db; margin-bottom: 20px; border-radius: 5px; box-shadow: 0 2px 8px rgba(0,0,0,0.07); }
+.review { background: #fff; padding: 25px; border-left: 5px solid #3498db; margin: 0; border-radius: 5px; box-shadow: 0 2px 8px rgba(0,0,0,0.07); width: 100%; box-sizing: border-box; }
 .review blockquote { margin: 0; font-style: italic; }
 .review cite { display: block; margin-top: 10px; font-weight: 700; text-align: right; }
 
@@ -839,7 +839,7 @@ footer { background-color: #333; color: #fff; text-align: center; padding: 20px 
 /* Слайдер */
 .slider-container { max-width: 800px; margin: 0 auto; position: relative; overflow: hidden; padding: 20px 0; }
 .slider-track { display: flex; transition: transform 0.5s ease-in-out; }
-.review-slide { min-width: 100%; box-sizing: border-box; padding: 0 10px; }
+.review-slide { min-width: 100%; box-sizing: border-box; padding: 0 50px; display: flex; align-items: center; }
 .slider-btn { position: absolute; top: 50%; transform: translateY(-50%); background-color: #fff; color: #2c3e50; border: 2px solid #f39c12; width: 40px; height: 40px; border-radius: 50%; font-size: 1.2em; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; user-select: none; }
 .slider-btn:hover { background-color: #f39c12; color: white; }
 .prev-btn { left: 0; }
