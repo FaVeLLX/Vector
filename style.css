@@ -1324,3 +1324,80 @@ body.dark-theme .hero::after {
 body.dark-theme .contact::before {
     display: none;
 }
+
+/* ========================================================
+   ОБНОВЛЕННЫЙ СТИЛЬ ЛИЧНОГО КАБИНЕТА (СВЕТЛАЯ И ТЁМНАЯ ТЕМА)
+   ======================================================== */
+
+/* Общий контейнер профиля и карточек */
+.profile-card, .dashboard-card, .stat-box {
+    background-color: #FFFFFF;
+    border: 1px solid #E5E7EB;
+    border-radius: 16px;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Карточка "Последний урок" (убираем синюю рамку, делаем чистый стиль) */
+.last-lesson-card {
+    border-top: 4px solid #D4FF19 !important; /* Фирменный лаймовый акцент сверху */
+}
+
+/* Кнопка "Подключиться" и "Профиль" */
+.btn-primary, .profile-edit-btn {
+    background-color: #000000 !important;
+    color: #D4FF19 !important;
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+}
+
+.btn-primary:hover, .profile-edit-btn:hover {
+    background-color: #1A1A1A !important;
+}
+
+/* Цифры и акценты в статистике */
+.stat-number {
+    color: #000000;
+    font-weight: 700;
+}
+
+/* Шкала прогресса */
+.progress-bar-fill {
+    background-color: #D4FF19 !important;
+}
+
+
+/* ========================================================
+   ТЁМНАЯ ТЕМА ДЛЯ ЛИЧНОГО КАБИНЕТА
+   ======================================================== */
+body.dark-theme .profile-card, 
+body.dark-theme .dashboard-card, 
+body.dark-theme .stat-box {
+    background-color: #121212 !important;
+    border-color: #262626 !important;
+    color: #FFFFFF !important;
+}
+
+/* Текст внутри карточек в тёмной теме */
+body.dark-theme .dashboard-card h3,
+body.dark-theme .stat-box span,
+body.dark-theme .profile-info {
+    color: #FFFFFF !important;
+}
+
+/* Цифры в статистике для тёмной темы делаем лаймовыми для красоты */
+body.dark-theme .stat-number {
+    color: #D4FF19 !important;
+}
+
+/* Кнопки в тёмной теме */
+body.dark-theme .btn-primary, 
+body.dark-theme .profile-edit-btn {
+    background-color: #FFFFFF !important;
+    color: #000000 !important;
+}
+
+body.dark-theme .btn-primary:hover, 
+body.dark-theme .profile-edit-theme:hover {
+    background-color: #E6E6E6 !important;
+}
