@@ -63,7 +63,9 @@
                     <li><a href="#services" onclick="handleNavClick(event, 'services')">Услуги</a></li>
                     <li><a href="#about" onclick="handleNavClick(event, 'about')">О школе</a></li>
                     <li><a href="#reviews" onclick="handleNavClick(event, 'reviews')">Отзывы</a></li>
+                    <li><a href="#pricing" onclick="handleNavClick(event, 'pricing')">Занятия</a></li>
                     <li><a href="#contact" onclick="handleNavClick(event, 'contact')">Контакты</a></li>
+                    <li><a href="#faq" onclick="handleNavClick(event, 'faq')">Вопросы</a></li>
                 </ul>
             </nav>
 
@@ -81,6 +83,7 @@
     </header>
 
     <main id="main-content">
+        <!-- ================= ГЛАВНЫЙ ЭКРАН (HERO) ================= -->
         <section class="hero">
             <div class="container">
                 <div class="hero-school-name">VECTOR</div>
@@ -89,6 +92,7 @@
             </div>
         </section>
 
+        <!-- ================= УСЛУГИ / ФОРМАТЫ ЗАНЯТИЙ ================= -->
         <section id="services" class="services">
             <div class="container">
                 <h2>Форматы занятий</h2>
@@ -120,6 +124,7 @@
             </div>
         </section>
         
+        <!-- ================= О ШКОЛЕ ================= -->
         <section id="about" class="about">
             <div class="container">
                 <h2>О школе Vector</h2>
@@ -150,6 +155,7 @@
             </div>
         </section>
 
+        <!-- ================= ОТЗЫВЫ (СЛАЙДЕР) ================= -->
         <section id="reviews" class="reviews">
             <div class="container">
                 <h2>Что говорят ученики</h2>
@@ -201,6 +207,21 @@
             </div>
         </section>
         
+        <!-- АКЦИОННЫЙ БАННЕР (Скидка до 1 сентября) -->
+        <section class="promo-banner-section" style="padding: 30px 0; background: linear-gradient(135deg, rgba(212, 255, 25, 0.15), rgba(212, 255, 25, 0.05)); border-top: 2px dashed #D4FF19; border-bottom: 2px dashed #D4FF19;">
+            <div class="container" style="text-align: center;">
+                <div style="font-size: 2em; margin-bottom: 10px;">🔥 Спецпредложение к учебному году!</div>
+                <h3 style="margin: 0 0 10px; font-size: 1.6em; color: #FFFFFF; text-transform: uppercase; letter-spacing: 1px;">Успей записаться в мини-группу до 1 сентября</h3>
+                <p class="promo-text" style="font-size: 1.2em; font-weight: 700; margin: 0 0 20px;">
+                    И получи скидку 50% на первый месяц обучения!
+                </p>
+                <button class="cta-button" onclick="document.getElementById('contact').scrollIntoView({behavior: 'smooth'})" style="padding: 12px 30px; font-size: 1em;">
+                    Занять место со скидкой
+                </button>
+            </div>
+        </section>
+
+        <!-- ================= ЦЕНЫ / ТАРИФЫ ================= -->
         <section id="pricing" class="pricing" style="padding: 80px 0; background-color: transparent;">
             <div class="container">
                 <h2 style="margin-bottom: 10px;">Стоимость занятий</h2>
@@ -339,6 +360,7 @@
             </div>
         </section>
 
+        <!-- ================= ЗАПИСЬ / ФОРМА БРОНИРОВАНИЯ ================= -->
         <section id="contact" class="contact">
             <div class="container">
                 <h2>Записаться на занятия</h2>
@@ -397,7 +419,7 @@
                         <div class="service-card" style="background: rgba(255,255,255,0.05); border: 1px solid #333;">
                             <div class="card-icon">👥</div>
                             <h3 style="color: #FFFFFF;">В мини-группе</h3>
-                            <p style="color: #CCCCCC;">До 5 человек. Мотивация, конкуренция и выгодная цена.</p>
+                            <p style="color: #CCCCCC;">От 5 до 10 человек. Мотивация, конкуренция и выгодная цена.</p>
                             <button class="submit-btn" style="margin-top: auto; padding: 15px 20px; width: 100%;" onclick="selectExamFormat('ОГЭ Группа', '9')">Хочу в группу</button>
                         </div>
                     </div>
@@ -432,8 +454,48 @@
                 </div>
             </div>
         </section>
+
+        <!-- БЛОК FAQ -->
+        <section id="faq" class="faq" style="padding: 80px 0; background-color: #000000; color: #FFFFFF;">
+            <div class="container" style="max-width: 800px;">
+                <h2 style="color: #FFFFFF; text-align: center; margin-bottom: 40px;">Часто задаваемые вопросы</h2>
+                <div class="faq-container">
+                    
+                    <details class="faq-item">
+                        <summary class="faq-accordion">Как проходят онлайн-занятия?<span class="faq-icon">+</span></summary>
+                        <div class="faq-panel">
+                            <p>Занятия проходят в формате живого видеозвонка с использованием интерактивной цифровой доски. Ученик видит всё, что я пишу, в реальном времени, может сам решать примеры на доске и задавать вопросы.</p>
+                        </div>
+                    </details>
+
+                    <details class="faq-item">
+                        <summary class="faq-accordion">Что делать, если ребёнок пропустил занятие?<span class="faq-icon">+</span></summary>
+                        <div class="faq-panel">
+                            <p>О пропуске нужно предупреждать заранее, минимум за сутки до занятия (при желании можно спокойно перенести его). При отсутствии без предупреждения занятие считается проведённым.</p>
+                        </div>
+                    </details>
+
+                    <details class="faq-item">
+                        <summary class="faq-accordion">Нужны ли какие-то учебники или материалы?<span class="faq-icon">+</span></summary>
+                        <div class="faq-panel">
+                            <p>Покупать ничего не нужно. Всю необходимую информацию, теорию, формулы и домашние задания я предоставляю в электронном виде бесплатно для учеников школы Vector.</p>
+                        </div>
+                    </details>
+
+                    <details class="faq-item">
+                        <summary class="faq-accordion">Как оплачиваются занятия?<span class="faq-icon">+</span></summary>
+                        <div class="faq-panel">
+                            <p>Оплата производится либо перед занятием, либо абонементами на месяц вперёд (за 8 занятий). Первое вводное занятие-знакомство и диагностика знаний проводятся абсолютно бесплатно.</p>
+                        </div>
+                    </details>
+
+                </div>
+            </div>
+        </section>
+
     </main>
 
+    <!-- ================= ПАНЕЛЬ УЧИТЕЛЯ (видна только role=admin/teacher) ================= -->
     <div id="admin-container" style="display: none;">
         <section class="lk-section">
             <div class="container">
@@ -462,6 +524,7 @@
         </section>
     </div>
 
+    <!-- ================= ЛИЧНЫЙ КАБИНЕТ УЧЕНИКА ================= -->
     <div id="lk-container" style="display: none;">
         <section class="lk-section">
             <div class="container">
@@ -507,6 +570,7 @@
         </section>
     </div>
 
+    <!-- ================= МОДАЛЬНОЕ ОКНО: ВХОД / РЕГИСТРАЦИЯ ================= -->
     <div id="auth-modal" class="modal">
         <div class="modal-content">
             <span class="close-modal" id="close-auth-modal">&times;</span>
@@ -525,6 +589,7 @@
         </div>
     </div>
 
+    <!-- ================= МОДАЛЬНОЕ ОКНО: НОВЫЙ УРОК (для учителя) ================= -->
     <div id="lesson-modal" class="modal">
         <div class="modal-content">
             <span class="close-modal" id="close-lesson-modal">&times;</span>
@@ -548,6 +613,11 @@
     </footer>
 
     <script type="module">
+        // ==========================================================
+        // ОСНОВНОЙ МОДУЛЬ: Firebase, авторизация, личный кабинет,
+        // панель учителя, темы, навигация
+        // ==========================================================
+
         // ✅ Функция для валидации email
         window.isValidEmail = function(email) {
             return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -1291,22 +1361,6 @@
                                 notifArea.innerHTML = '';
                             }
 
-                            // Теория
-                            const theoryBox = document.getElementById('student-theory-content');
-                            if (userData.theoryAccess) {
-                                theoryBox.innerHTML = `
-                                    <p style="color: #27ae60; font-weight: bold; margin-bottom: 15px;">Доступ открыт! Твои справочные материалы:</p>
-                                    <a href="theory.html" target="_blank" class="action-btn" style="display:inline-block; padding:12px 22px; text-decoration:none; background-color:#8e44ad; font-size:1em;">📐 Открыть шпаргалку: Площади фигур</a>
-                                `;
-                            } else {
-                                theoryBox.innerHTML = `
-                                    <div style="text-align: center; padding: 20px; background: #f9f9f9; border-radius: 8px;">
-                                        <div style="font-size: 3em; margin-bottom: 10px;">🔒</div>
-                                        <p style="color: #7f8c8d; margin-bottom: 15px;">Эта закрытая база знаний доступна только активным ученикам.</p>
-                                    </div>
-                                `;
-                            }
-
                             // Список уроков
                             const lessonContentBox = document.getElementById('student-lesson-content');
                             if (lessonsArray.length > 0) {
@@ -1422,6 +1476,11 @@
     </script>
 
     <script>
+        // ==========================================================
+        // ФОРМА ЗАПИСИ: валидация, антиспам, вкладки услуг,
+        // слайдер отзывов, копирование email, отправка заявки
+        // ==========================================================
+
         // ✅ Валидация формы бронирования
         function validateBookingForm(data) {
             if (!data.name || data.name.trim().length < 2) 
@@ -1552,27 +1611,48 @@
         });
     </script>
     <script>
-        // Логика выпадающего мобильного меню
+        // ==========================================================
+        // ИНИЦИАЛИЗАЦИЯ ИНТЕРФЕЙСА ПОСЛЕ ЗАГРУЗКИ СТРАНИЦЫ:
+        // мобильное меню + аккордеон FAQ
+        // ==========================================================
         document.addEventListener('DOMContentLoaded', function() {
+            
+            // 1. Логика выпадающего мобильного меню
             const mobileBtn = document.getElementById('mobile-menu-btn');
             const navMenu = document.getElementById('main-nav');
 
-            // Открытие/закрытие меню по клику на бургер
-            mobileBtn.addEventListener('click', function() {
-                navMenu.classList.toggle('active');
-            });
+            if (mobileBtn && navMenu) {
+                // Открытие/закрытие меню по клику на бургер
+                mobileBtn.addEventListener('click', function() {
+                    navMenu.classList.toggle('active');
+                });
 
-            // Автоматическое закрытие меню при клике на любую ссылку или кнопку внутри
-            const navItems = navMenu.querySelectorAll('a, button, label');
-            navItems.forEach(item => {
-                item.addEventListener('click', function() {
-                    navMenu.classList.remove('active');
+                // Автоматическое закрытие меню при клике на любую ссылку или кнопку внутри
+                const navItems = navMenu.querySelectorAll('a, button, label');
+                navItems.forEach(item => {
+                    item.addEventListener('click', function() {
+                        navMenu.classList.remove('active');
+                    });
+                });
+            }
+
+            // 2. Логика аккордеона FAQ: меняем текст +/- через нативное
+            // событие "toggle" у <details> — оно срабатывает каждый раз,
+            // когда элемент открывается или закрывается (в т.ч. клавиатурой)
+            document.querySelectorAll("#faq .faq-item").forEach(item => {
+                const icon = item.querySelector(".faq-icon");
+                item.addEventListener("toggle", function() {
+                    if (icon) icon.textContent = item.open ? "−" : "+";
                 });
             });
         });
     </script>
 
     <script>
+        // ==========================================================
+        // ВКЛАДКИ ФОРМЫ ЗАПИСИ И ВКЛАДКИ ЦЕН (переключение табов)
+        // ==========================================================
+
         // Функция для переключения вкладок формы
         function openBookingTab(evt, tabId) {
             let contents = document.getElementsByClassName("booking-tab-content");

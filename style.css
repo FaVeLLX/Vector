@@ -1,3 +1,17 @@
+/* ============================================================
+   ОГЛАВЛЕНИЕ (по мере следования блоков в файле):
+   1. Общие стили + тёмная тема (body, шапка, кнопки, отзывы, ЛК)
+   2. Личный кабинет / роли / авторизация
+   3. Вкладки услуг и цен (светлая и тёмная тема)
+   4. Адаптив: компактная шапка для мобильных
+   5. Плавные переходы между секциями (hero -> контакты)
+   6. Блок цен (pricing)
+   7. Цветовые фиксы вкладок и тарифов
+   8. Обновления личного кабинета (светлая/тёмная тема)
+   9. Акционный баннер
+   10. FAQ (аккордеон на <details>/<summary>)
+   ============================================================ */
+
 /* Общие стили */
 body {
     font-family: 'Montserrat', sans-serif;
@@ -96,39 +110,16 @@ body.dark-theme .service-card h3 {
     color: #D4FF19;
 }
 
-body.dark-theme .review {
-    background-color: #000000;
-    border-left-color: #D4FF19;
-}
-
 body.dark-theme .review-slide {
     background-color: transparent;
     color: #FFFFFF;
-}
-
-body.dark-theme .review blockquote {
-    color: #FFFFFF;
-}
-
-body.dark-theme .review cite {
-    color: #999999;
 }
 
 body.dark-theme .slider-container {
     background-color: transparent;
 }
 
-body.dark-theme .slider-btn {
-    background-color: #0A0A0A;
-    color: #FFFFFF;
-    border-color: #555555;
-}
-
-body.dark-theme .slider-btn:hover {
-    background-color: #D4FF19;
-    color: #000000;
-    border-color: #D4FF19;
-}
+/* Полные версии .review / .slider-btn объявлены один раз ниже, в блоке "Отзывы (тёмная тема)" */
 
 body.dark-theme .contact {
     background-color: #000000;
@@ -466,9 +457,7 @@ body.dark-theme .profile-badge:hover {
     background-color: #C2E617;
 }
 
-body.dark-theme .theme-slider {
-    background-color: #333333;
-}
+/* .theme-slider для тёмной темы объявлен один раз ниже, рядом с .theme-switch */
 
 body.dark-theme #lk-container,
 body.dark-theme .lk-section,
@@ -847,7 +836,7 @@ header .container {
 }
 
 /* Настройки для планшетов и телефонов */
-@media (max-width: 800px) {
+@media (max-width: 980px) {
     /* Показываем кнопку-бутерброд */
     .mobile-menu-btn { display: block !important; }
     
@@ -1620,4 +1609,221 @@ body.dark-theme .pricing-grid div.price-per-lesson {
 body.dark-theme .pricing-grid div.price-per-lesson.accent {
     border-top: none !important;
     border: none !important;
+}
+
+/* ========================================================
+   ОБНОВЛЕНИЕ ЛИЧНОГО КАБИНЕТА (СВЕТЛАЯ И ТЁМНАЯ ТЕМЫ)
+   ======================================================== */
+
+/* --- 1. СВЕТЛАЯ ТЕМА (Убиваем старую "радугу") --- */
+
+/* Аватар */
+#student-avatar {
+    background-color: #000000 !important;
+    color: #D4FF19 !important;
+}
+
+/* Имя ученика и цветные заголовки (синий -> черный) */
+#student-name,
+#lk-container .lk-card div[style*="color:#3498db"] {
+    color: #000000 !important;
+}
+
+/* Кнопка "Профиль" */
+#edit-profile-btn {
+    background-color: #000000 !important;
+    color: #D4FF19 !important;
+    border: none !important;
+}
+#edit-profile-btn:hover {
+    background-color: #333333 !important;
+}
+
+/* Верхние цветные рамки карточек (Последний урок, Твои занятия) */
+#lk-container .lk-card[style*="border-top"] {
+    border-top: 5px solid #D4FF19 !important;
+}
+
+/* Фон карточки "Последний урок" (убираем голубой градиент) */
+#lk-container .lk-card[style*="background:linear-gradient"] {
+    background: #FAFAFA !important;
+}
+
+/* Статистика: убираем цветные цифры, делаем строгими черными */
+#student-stats > div > div:first-child {
+    color: #000000 !important;
+}
+
+/* Шкала прогресса (зеленый -> лаймовый) */
+#student-progress-fill {
+    background-color: #D4FF19 !important;
+}
+
+
+/* --- 2. ТЁМНАЯ ТЕМА (Добавляем глубину, контраст и читаемость) --- */
+
+/* Делаем сами карточки чуть светлее фона, чтобы они выделялись */
+body.dark-theme #lk-container .lk-card {
+    background-color: #121212 !important; 
+    border: 1px solid #262626 !important;
+}
+
+/* Текст имени и заголовков */
+body.dark-theme #student-name,
+body.dark-theme #lk-container .lk-card div[style*="color:#3498db"] {
+    color: #FFFFFF !important;
+}
+
+/* Плашки со статистикой */
+body.dark-theme #student-stats > div {
+    background-color: #1A1A1A !important;
+    border: 1px solid #333333 !important;
+}
+
+/* Акцентные лаймовые цифры в статистике для тёмной темы */
+body.dark-theme #student-stats > div > div:first-child {
+    color: #D4FF19 !important;
+}
+
+/* Фон (трек) для шкалы прогресса */
+body.dark-theme .lk-card > div[style*="background:#eee"] {
+    background-color: #333333 !important;
+}
+
+/* Сама заполненная шкала прогресса */
+body.dark-theme #student-progress-fill {
+    background-color: #D4FF19 !important;
+}
+
+/* Мелкий текст под статистикой */
+body.dark-theme #student-stats > div > div:last-child {
+    color: #999999 !important;
+}
+
+/* Внутренние блоки (например, списки прошлых уроков) */
+body.dark-theme #student-lesson-content > div {
+    background-color: #1A1A1A !important;
+    border: 1px solid #333333 !important;
+}
+
+/* Теги времени/даты внутри прошлых уроков */
+body.dark-theme #student-lesson-content span[style*="background: #ecf0f1"] {
+    background-color: #333333 !important;
+    color: #CCCCCC !important;
+}
+
+/* ========================================================
+   ФИНАЛЬНАЯ ЗАЧИСТКА КАБИНЕТА В ТЁМНОЙ ТЕМЕ
+   ======================================================== */
+
+/* 1. Убираем чёрные полосы-фоны у текста внутри карточек */
+body.dark-theme #lk-container .lk-card h3,
+body.dark-theme #lk-container .lk-card h4,
+body.dark-theme #lk-container .lk-card p,
+body.dark-theme #lk-container .lk-card span,
+body.dark-theme #lk-container .lk-card div[style*="text-transform:uppercase"] {
+    background-color: transparent !important; /* Делаем фон текста прозрачным */
+}
+
+body.dark-theme #lk-container .lk-card.span-2 div {
+    background-color: transparent !important;
+}
+
+/* 2. Возвращаем лаймовый цвет ПЕРВОЙ цифре в статистике */
+body.dark-theme #student-stats > div > div:first-child,
+body.dark-theme #lk-container .lk-card div[style*="font-size:1.6em"] {
+    color: #D4FF19 !important;
+}
+
+/* ========================================================
+   СТИЛИ АКЦИОННОГО БАННЕРА
+   ======================================================== */
+.promo-banner-section h3 {
+    color: #000000 !important;
+}
+
+body.dark-theme .promo-banner-section h3 {
+    color: #FFFFFF !important;
+}
+
+/* ========================================================
+   ИСПРАВЛЕНИЕ ЦВЕТА ТЕКСТА В АКЦИОННОМ БАННЕРЕ
+   ======================================================== */
+.promo-banner-section .promo-text {
+    color: #2D4A00 !important; /* Насыщенный тёмно-оливковый/зелёный для светлой темы */
+}
+
+body.dark-theme .promo-banner-section .promo-text {
+    color: #D4FF19 !important; /* Яркий лаймовый для тёмной темы */
+}
+
+/* ========================================================
+   НАТИВНЫЙ АККОРДЕОН FAQ (<details> / <summary>)
+   ======================================================== */
+.faq-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.faq-item {
+    background-color: #0A0A0A;
+    border: 1px solid #222222;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    transition: border-color 0.3s ease;
+}
+
+/* Подсветка рамки при наведении и при открытии */
+.faq-item:hover,
+.faq-item[open] {
+    border-color: #D4FF19;
+}
+
+#faq .faq-accordion {
+    background-color: transparent !important;
+    color: #FFFFFF !important;
+    cursor: pointer;
+    padding: 20px 24px !important;
+    width: 100% !important;
+    border: none !important;
+    text-align: left !important;
+    outline: none !important;
+    font-size: 1.15em !important;
+    font-weight: 700 !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    gap: 15px;
+    font-family: 'Montserrat', sans-serif !important;
+    list-style: none; /* Убираем дефолтный маркер списка в браузерах */
+}
+
+/* Убираем стандартную галочку в Chrome/Safari */
+#faq .faq-accordion::-webkit-details-marker {
+    display: none;
+}
+
+/* Иконка +/-: отдельный span, текст которого меняет JS
+   (событие "toggle" у <details>) — надёжнее, чем content
+   через ::after на <summary>, который в части браузеров
+   отрисовывается нестабильно */
+#faq .faq-icon {
+    flex-shrink: 0;
+    font-size: 1.4em;
+    font-weight: 400;
+    line-height: 1;
+    color: #D4FF19;
+}
+
+#faq .faq-panel {
+    padding: 0 24px 24px 24px !important;
+    color: #CCCCCC !important;
+    font-size: 1.05em !important;
+}
+
+#faq .faq-panel p {
+    margin: 0 !important;
+    color: #CCCCCC !important;
 }
