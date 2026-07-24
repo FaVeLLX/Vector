@@ -1325,53 +1325,32 @@ body.dark-theme .contact::before {
     display: none;
 }
 
-/* ========================================================
-   ОБНОВЛЕННЫЙ СТИЛЬ ЛИЧНОГО КАБИНЕТА (СВЕТЛАЯ И ТЁМНАЯ ТЕМА)
-   ======================================================== */
-
-/* Общий контейнер профиля и карточек */
-.profile-card, .dashboard-card, .stat-box {
-    background-color: #FFFFFF;
-    border: 1px solid #E5E7EB;
-    border-radius: 16px;
-    transition: background-color 0.3s ease, border-color 0.3s ease;
+/* =1. СБРОС СИНИХ И ОРАНЖЕВЫХ РАМОК = */
+.last-lesson-card, 
+div[class*="lesson"], 
+.dashboard-card:first-child {
+    border-color: #E5E7EB !important;
+    border-top: 4px solid #D4FF19 !important;
 }
 
-/* Карточка "Последний урок" (убираем синюю рамку, делаем чистый стиль) */
-.last-lesson-card {
-    border-top: 4px solid #D4FF19 !important; /* Фирменный лаймовый акцент сверху */
-}
-
-/* Кнопка "Подключиться" и "Профиль" */
-.btn-primary, .profile-edit-btn {
-    background-color: #000000 !important;
-    color: #D4FF19 !important;
-    border: none;
-    border-radius: 12px;
-    font-weight: 600;
-}
-
-.btn-primary:hover, .profile-edit-btn:hover {
-    background-color: #1A1A1A !important;
-}
-
-/* Цифры и акценты в статистике */
-.stat-number {
-    color: #000000;
-    font-weight: 700;
+/* Рамка для блока "Твои занятия" (убираем оранжевую, делаем нейтральную/лаймовую) */
+.schedule-card, 
+div[class*="schedule"],
+.dashboard-card:last-of-type {
+    border-top: 4px solid #D4FF19 !important;
 }
 
 /* Шкала прогресса */
-.progress-bar-fill {
+.progress-bar-fill, 
+div[class*="progress"] {
     background-color: #D4FF19 !important;
 }
 
 
-/* ========================================================
-   ТЁМНАЯ ТЕМА ДЛЯ ЛИЧНОГО КАБИНЕТА
-   ======================================================== */
-body.dark-theme .profile-card, 
-body.dark-theme .dashboard-card, 
+/* = 2. ТЁМНАЯ ТЕМА (ПРИНУДИТЕЛЬНО) = */
+body.dark-theme .profile-card,
+body.dark-theme .dashboard-card,
+body.dark-theme div[class*="card"],
 body.dark-theme .stat-box {
     background-color: #121212 !important;
     border-color: #262626 !important;
@@ -1379,25 +1358,266 @@ body.dark-theme .stat-box {
 }
 
 /* Текст внутри карточек в тёмной теме */
-body.dark-theme .dashboard-card h3,
-body.dark-theme .stat-box span,
-body.dark-theme .profile-info {
-    color: #FFFFFF !important;
+body.dark-theme h3, 
+body.dark-theme p, 
+body.dark-theme span,
+body.dark-theme div {
+    color: #FFFFFF;
 }
 
-/* Цифры в статистике для тёмной темы делаем лаймовыми для красоты */
-body.dark-theme .stat-number {
+/* Исключение для цифр статистики в тёмной теме — делаем их лаймовыми */
+body.dark-theme .stat-number,
+body.dark-theme span[class*="stat"] {
     color: #D4FF19 !important;
 }
 
-/* Кнопки в тёмной теме */
-body.dark-theme .btn-primary, 
-body.dark-theme .profile-edit-btn {
-    background-color: #FFFFFF !important;
-    color: #000000 !important;
+/* ========================================================
+   ЖЕСТКОЕ ИСПРАВЛЕНИЕ ХОВЕРА ДЛЯ ВКЛАДОК (ТЁМНАЯ ТЕМА)
+   ======================================================== */
+
+/* 1. Поведение при наведении на неактивную вкладку */
+body.dark-theme #booking-tabs .tab-btn:hover {
+    background-color: #2A2A2A !important; /* Делаем фон чуть светлее черного */
+    color: #FFFFFF !important; /* Текст железобетонно белый */
+    border-color: #555555 !important;
 }
 
-body.dark-theme .btn-primary:hover, 
-body.dark-theme .profile-edit-theme:hover {
-    background-color: #E6E6E6 !important;
+/* 2. Поведение активной вкладки (защищаем её от перекрашивания) */
+body.dark-theme #booking-tabs .tab-btn.active,
+body.dark-theme #booking-tabs .tab-btn.active:hover {
+    /* Судя по вашему скриншоту, вы всё-таки оставили лаймовый цвет */
+    background-color: #D4FF19 !important; 
+    color: #000000 !important; /* Текст на лаймовом всегда черный */
+    border-color: #D4FF19 !important;
+}
+
+/* ========================================================
+   БЛОК ЦЕН (PRICING)
+   ======================================================== */
+.pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 40px; /* Увеличен отступ, чтобы плашка "Хит" не наезжала на другие элементы */
+    align-items: center; 
+    margin-top: 30px;
+}
+
+.pricing-card {
+    background: #FFFFFF;
+    border: 1px solid #EEEEEE;
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.pricing-card:hover {
+    transform: translateY(-5px);
+}
+
+.pricing-card h3 {
+    margin-top: 0;
+    font-size: 1.4em;
+    color: #000000;
+}
+
+.price {
+    font-size: 2.5em;
+    font-weight: 700;
+    color: #000000;
+    margin: 15px 0 5px;
+}
+
+.price span {
+    font-size: 0.4em;
+    color: #7f8c8d;
+    font-weight: 400;
+}
+
+/* Блок "за урок/за месяц" (Базовый стиль для 1 и 3 тарифа) */
+.price-per-lesson {
+    background: #F1F2F6;
+    color: #000000;
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.85em;
+    font-weight: 700;
+    margin-bottom: 15px;
+    text-align: center;
+    border: 1px solid #E5E7EB; /* Аккуратная граница */
+    box-shadow: none; /* Убиваем любые старые тени */
+}
+
+/* Оранжевый акцент для группы (Стиль как у бейджа ХИТ) */
+.price-per-lesson.accent {
+    background: #FF8C00;
+    color: #000000;
+    border: none;
+}
+
+.pricing-desc {
+    font-size: 0.9em;
+    color: #666666;
+    margin-bottom: 20px;
+    min-height: 40px;
+}
+
+/* Итоговая сумма */
+.pricing-total {
+    font-weight: 700;
+    color: #000000;
+    margin-bottom: 20px;
+    font-size: 0.95em;
+}
+
+.pricing-features {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 25px 0;
+    flex-grow: 1;
+}
+
+.pricing-features li {
+    margin-bottom: 12px;
+    font-size: 0.95em;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.pricing-features li.disabled {
+    opacity: 0.5;
+    text-decoration: line-through;
+}
+
+/* --- ВЫДЕЛЕНИЕ ХИТА ПРОДАЖ --- */
+.hit-card {
+    border: 3px solid #FF8C00;
+    transform: scale(1.05); 
+    box-shadow: 0 10px 30px rgba(255, 140, 0, 0.15);
+    z-index: 2;
+}
+
+.hit-card:hover {
+    transform: scale(1.05) translateY(-5px);
+}
+
+.hit-badge {
+    position: absolute;
+    top: -16px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #FF8C00;
+    color: #000000;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 0.8em;
+    white-space: nowrap;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+/* --- ТЁМНАЯ ТЕМА ДЛЯ ЦЕН (Принудительное перекрашивание) --- */
+body.dark-theme .pricing-card {
+    background: #0A0A0A !important;
+    border-color: #333333 !important;
+}
+
+body.dark-theme .pricing-card h3,
+body.dark-theme .price {
+    color: #FFFFFF !important;
+}
+
+body.dark-theme .pricing-desc {
+    color: #CCCCCC !important;
+}
+
+body.dark-theme .pricing-total {
+    color: #FFFFFF !important;
+}
+
+body.dark-theme .price-per-lesson {
+    background: #222222 !important;
+    color: #FFFFFF !important;
+    border-color: #333333 !important;
+    box-shadow: none !important;
+}
+
+body.dark-theme .price-per-lesson.accent {
+    background: #FF8C00 !important;
+    color: #000000 !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+body.dark-theme .hit-card {
+    background: #111111 !important;
+    border-color: #FF8C00 !important;
+}
+
+/* ========================================================
+   ЛАЙМОВЫЙ ЦВЕТ ТОЛЬКО ДЛЯ ВКЛАДОК НАВИГАЦИИ
+   ======================================================== */
+
+/* Для светлой темы */
+#booking-tabs .tab-btn.active,
+#pricing-tabs .tab-btn.active {
+    background-color: #D4FF19 !important;
+    color: #000000 !important;
+    border-color: #000000 !important;
+}
+
+/* Для тёмной темы */
+body.dark-theme #booking-tabs .tab-btn.active,
+body.dark-theme #booking-tabs .tab-btn.active:hover,
+body.dark-theme #pricing-tabs .tab-btn.active,
+body.dark-theme #pricing-tabs .tab-btn.active:hover {
+    background-color: #D4FF19 !important; 
+    color: #000000 !important; 
+    border-color: #D4FF19 !important;
+    box-shadow: 0 4px 15px rgba(212, 255, 25, 0.2) !important; /* Лёгкое лаймовое свечение */
+}
+
+@media (max-width: 900px) {
+    .pricing-grid {
+        align-items: stretch;
+        gap: 50px; 
+    }
+    .hit-card {
+        transform: none;
+    }
+    .hit-card:hover {
+        transform: translateY(-5px);
+    }
+}
+
+/* ========================================================
+   ЖЁСТКОЕ УДАЛЕНИЕ ЗЕЛЁНОЙ ДУГИ В ТАРИФАХ
+   ======================================================== */
+
+/* Явно перебиваем свойство border-top для светлой темы */
+.pricing-grid div.price-per-lesson {
+    border-top: 1px solid #E5E7EB !important; 
+    border: 1px solid #E5E7EB !important; 
+}
+
+/* Для оранжевой плашки рамки вообще отключаем */
+.pricing-grid div.price-per-lesson.accent {
+    border-top: none !important;
+    border: none !important;
+}
+
+/* Явно перебиваем свойство border-top для тёмной темы */
+body.dark-theme .pricing-grid div.price-per-lesson {
+    border-top: 1px solid #333333 !important;
+    border: 1px solid #333333 !important;
+}
+
+body.dark-theme .pricing-grid div.price-per-lesson.accent {
+    border-top: none !important;
+    border: none !important;
 }

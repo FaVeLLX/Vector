@@ -200,46 +200,228 @@
                 </div>
             </div>
         </section>
+        
+        <section id="pricing" class="pricing" style="padding: 80px 0; background-color: transparent;">
+            <div class="container">
+                <h2 style="margin-bottom: 10px;">Стоимость занятий</h2>
+                <p style="text-align: center; margin-bottom: 30px; font-size: 1.1em; color: #7f8c8d;">
+                    🎁 Первое пробное занятие с диагностикой знаний — <strong style="color: #000000; background: #D4FF19; padding: 2px 8px; border-radius: 4px;">бесплатно</strong>
+                </p>
+
+                <!-- Вкладки для переключения прайсов -->
+                <div class="tabs-container" id="pricing-tabs" style="margin-bottom: 40px;">
+                    <button class="tab-btn active" onclick="openPricingTab(event, 'price-school')">Школьная программа</button>
+                    <button class="tab-btn" onclick="openPricingTab(event, 'price-oge')">ОГЭ (9 класс)</button>
+                    <button class="tab-btn" onclick="openPricingTab(event, 'price-ege')">ЕГЭ (11 класс)</button>
+                </div>
+
+                <!-- ================= ТАРИФЫ: ШКОЛА ================= -->
+                <div class="pricing-tab-content" id="price-school" style="display: block;">
+                    <div class="pricing-grid">
+                        <div class="pricing-card">
+                            <h3>Разовое занятие</h3>
+                            <div class="price">1 600 ₽<span> / час</span></div>
+                            <div class="price-per-lesson">1 урок - 60 мин</div>
+                            <p class="pricing-desc">Помощь с домашними заданиями и закрытие пробелов.</p>
+                            <ul class="pricing-features">
+                                <li>✅ Индивидуальный разбор</li>
+                                <li>✅ 120 минут плотной работы</li>
+                                <li class="disabled">❌ Поддержка в чате 24/7</li>
+                            </ul>
+                            <button class="action-btn" style="width: 100%; padding: 12px;" onclick="document.getElementById('contact').scrollIntoView({behavior: 'smooth'})">Записаться</button>
+                        </div>
+
+                        <div class="pricing-card">
+                            <h3>Индивидуально</h3>
+                            <div class="price">1 500 ₽<span> / час</span></div>
+                            <div class="price-per-lesson">8 занятий по 60 мин в месяц</div>
+                            <p class="pricing-total">Оплата за месяц: 12 000 ₽</p>
+                            <ul class="pricing-features">
+                                <li>✅ Фокус на вашем темпе</li>
+                                <li>✅ Личный контроль успеваемости</li>
+                                <li>✅ Связь со мной в Telegram</li>
+                            </ul>
+                            <button class="action-btn" style="width: 100%; padding: 12px;" onclick="document.getElementById('contact').scrollIntoView({behavior: 'smooth'})">Взять абонемент</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ================= ТАРИФЫ: ОГЭ ================= -->
+                <div class="pricing-tab-content" id="price-oge" style="display: none;">
+                    <div class="pricing-grid">
+                        <div class="pricing-card">
+                            <h3>Разовое занятие</h3>
+                            <div class="price">1 800 ₽<span> / час</span></div>
+                            <div class="price-per-lesson">1 урок - 120 мин</div>
+                            <p class="pricing-desc">Разбор сложных заданий второй части ОГЭ.</p>
+                            <ul class="pricing-features">
+                                <li>✅ Индивидуальный разбор</li>
+                                <li>✅ 120 минут плотной работы</li>
+                                <li class="disabled">❌ Поддержка в чате 24/7</li>
+                            </ul>
+                            <button class="action-btn" style="width: 100%; padding: 12px;" onclick="document.getElementById('contact').scrollIntoView({behavior: 'smooth'})">Записаться</button>
+                        </div>
+
+                        <div class="pricing-card hit-card">
+                            <div class="hit-badge">ХИТ ПРОДАЖ / ВЫГОДА 50%</div>
+                            <h3>Мини-группа ОГЭ</h3>
+                            <div class="price">1 000 ₽<span> / час</span></div>
+                            <div class="price-per-lesson accent">8 занятий по 120 мин в месяц</div>
+                            <p class="pricing-total">Оплата за месяц: 16 000 ₽</p>
+                            <ul class="pricing-features">
+                                <li>✅ Полный разбор структуры ОГЭ</li>
+                                <li>✅ Написание пробников</li>
+                                <li>✅ Проверка ДЗ с комментариями</li>
+                            </ul>
+                            <button class="submit-btn" style="width: 100%; padding: 15px;" onclick="selectExamFormat('ОГЭ Группа', '9')">Выбрать группу</button>
+                        </div>
+
+                        <div class="pricing-card">
+                            <h3>Индивидуально ОГЭ</h3>
+                            <div class="price">1 700 ₽<span> / час</span></div>
+                            <div class="price-per-lesson">8 занятий по 120 мин в месяц</div>
+                            <p class="pricing-total">Оплата за месяц: 27 200 ₽</p>
+                            <ul class="pricing-features">
+                                <li>✅ Точечная подготовка к экзамену</li>
+                                <li>✅ Персональный план подготовки</li>
+                                <li>✅ Связь со мной в Telegram</li>
+                            </ul>
+                            <button class="action-btn" style="width: 100%; padding: 12px;" onclick="document.getElementById('contact').scrollIntoView({behavior: 'smooth'})">Взять абонемент</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ================= ТАРИФЫ: ЕГЭ ================= -->
+                <div class="pricing-tab-content" id="price-ege" style="display: none;">
+                    <div class="pricing-grid">
+                        <div class="pricing-card">
+                            <h3>Разовое занятие</h3>
+                            <div class="price">2 500 ₽<span> / час</span></div>
+                            <div class="price-per-lesson">1 урок - 120 мин</div>
+                            <p class="pricing-desc">Разбор отдельных тем и заданий из ЕГЭ.</p>
+                            <ul class="pricing-features">
+                                <li>✅ Экспертный уровень разбора</li>
+                                <li>✅ 120 минут плотной работы</li>
+                                <li class="disabled">❌ Поддержка в чате 24/7</li>
+                            </ul>
+                            <button class="action-btn" style="width: 100%; padding: 12px;" onclick="document.getElementById('contact').scrollIntoView({behavior: 'smooth'})">Записаться</button>
+                        </div>
+
+                        <div class="pricing-card hit-card">
+                            <div class="hit-badge">МАКСИМУМ ПОЛЬЗЫ</div>
+                            <h3>Мини-группа ЕГЭ</h3>
+                            <div class="price">1 200 ₽<span> / час</span></div>
+                            <div class="price-per-lesson accent">8 занятий по 120 мин в месяц</div>
+                            <p class="pricing-total">Оплата за месяц: 19 200 ₽</p>
+                            <ul class="pricing-features">
+                                <li>✅ Интенсивная подготовка к ЕГЭ</li>
+                                <li>✅ Мощная конкуренция</li>
+                                <li>✅ Оформление второй части</li>
+                            </ul>
+                            <button class="submit-btn" style="width: 100%; padding: 15px;" onclick="selectExamFormat('ЕГЭ Группа', '11')">Выбрать группу</button>
+                        </div>
+
+                        <div class="pricing-card">
+                            <h3>Индивидуально ЕГЭ</h3>
+                            <div class="price">2 400 ₽<span> / час</span></div>
+                            <div class="price-per-lesson">8 занятий по 120 мин в месяц</div>
+                            <p class="pricing-total">Оплата за месяц: 38 400 ₽</p>
+                            <ul class="pricing-features">
+                                <li>✅ Работа на 90+ баллов</li>
+                                <li>✅ Разбор самых сложных задач</li>
+                                <li>✅ Связь со мной 24/7</li>
+                            </ul>
+                            <button class="action-btn" style="width: 100%; padding: 12px;" onclick="document.getElementById('contact').scrollIntoView({behavior: 'smooth'})">Взять абонемент</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
 
         <section id="contact" class="contact">
             <div class="container">
-                <h2>Запишитесь на пробный урок</h2>
-                <p>Заполните форму, и я свяжусь с вами в течение 2 часов.</p>
+                <h2>Записаться на занятия</h2>
+                <p>Выберите цель занятий, и я свяжусь с вами в течение 2 часов.</p>
                 
-                <form id="lesson-form" class="booking-form">
-                    <div class="form-row">
-                        <input type="text" name="name" placeholder="Ваше имя *" required class="form-input">
-                        <input type="tel" name="phone" placeholder="Телефон/Telegram *" required class="form-input">
+                <!-- Главные переключатели (Цель) -->
+                <div class="tabs-container" id="booking-tabs" style="margin-top: 30px;">
+                    <button class="tab-btn active" onclick="openBookingTab(event, 'tab-school')">Школьная программа</button>
+                    <button class="tab-btn" onclick="openBookingTab(event, 'tab-oge')">Подготовка к ОГЭ</button>
+                    <button class="tab-btn" onclick="openBookingTab(event, 'tab-ege')">Подготовка к ЕГЭ</button>
+                </div>
+
+                <!-- ВКЛАДКА 1: ШКОЛЬНАЯ ПРОГРАММА (Сама форма) -->
+                <div class="tab-content booking-tab-content" id="tab-school" style="display: block;">
+                    <form id="lesson-form" class="booking-form">
+                        <h3 class="category-title" style="text-align: center; border: none; margin-top: 0; padding: 0; color: #FFFFFF;">Математика для любого класса</h3>
+                        
+                        <div class="form-row">
+                            <input type="text" name="name" placeholder="Ваше имя *" required class="form-input">
+                            <input type="tel" name="phone" placeholder="Телефон/Telegram *" required class="form-input">
+                        </div>
+                        
+                        <input type="email" name="email" placeholder="Email *" required class="form-input" style="margin-bottom: 15px;">
+                        
+                        <select name="grade" required class="form-select" style="margin-bottom: 15px;">
+                            <option value="">Выберите класс *</option>
+                            <option value="5">5 класс</option>
+                            <option value="6">6 класс</option>
+                            <option value="7">7 класс</option>
+                            <option value="8">8 класс</option>
+                            <option value="9">9 класс</option>
+                            <option value="10">10 класс</option>
+                            <option value="11">11 класс</option>
+                        </select>
+
+                        <!-- Скрытые поля для сохранения логики вашей базы данных -->
+                        <input type="hidden" name="subject" value="Математика">
+                        <input type="hidden" name="lesson_type" id="hidden-lesson-type" value="Школьная программа">
+                        
+                        <textarea name="message" placeholder="Ваши пожелания или вопросы..." class="form-textarea" style="margin-bottom: 20px;"></textarea>
+                        
+                        <button type="submit" class="submit-btn">Отправить заявку</button>
+                        <div id="form-message"></div>
+                    </form>
+                </div>
+
+        <!-- ВКЛАДКА 2: ОГЭ -->
+                <div class="tab-content booking-tab-content" id="tab-oge" style="display: none;">
+                    <div class="services-grid">
+                        <div class="service-card" style="background: rgba(255,255,255,0.05); border: 1px solid #333;">
+                            <div class="card-icon">🎯</div>
+                            <h3 style="color: #FFFFFF;">Индивидуально</h3>
+                            <p style="color: #CCCCCC;">Свой темп, закрываем личные пробелы.</p>
+                            <button class="submit-btn" style="margin-top: auto; padding: 15px 20px; width: 100%;" onclick="selectExamFormat('ОГЭ Индивидуально', '9')">Оставить заявку</button>
+                        </div>
+                        <div class="service-card" style="background: rgba(255,255,255,0.05); border: 1px solid #333;">
+                            <div class="card-icon">👥</div>
+                            <h3 style="color: #FFFFFF;">В мини-группе</h3>
+                            <p style="color: #CCCCCC;">До 5 человек. Мотивация, конкуренция и выгодная цена.</p>
+                            <button class="submit-btn" style="margin-top: auto; padding: 15px 20px; width: 100%;" onclick="selectExamFormat('ОГЭ Группа', '9')">Хочу в группу</button>
+                        </div>
                     </div>
-                    
-                    <input type="email" name="email" placeholder="Email *" required class="form-input" style="margin-bottom: 15px;">
-                    
-                    <select name="subject" required class="form-select" style="margin-bottom: 15px;">
-                        <option value="Математика">Математика</option>
-                    </select>
+                </div>
 
-                    <select name="grade" required class="form-select" style="margin-bottom: 15px;">
-                        <option value="">Выберите класс *</option>
-                        <option value="1-4">1-4 класс</option>
-                        <option value="5-7">5-7 класс</option>
-                        <option value="8-9">8-9 класс</option>
-                        <option value="10-11">10-11 класс</option>
-                        <option value="student">Подготовка к вступительным</option>
-                    </select>
-                    
-                    <select name="lesson_type" class="form-select" style="margin-bottom: 15px;">
-                        <option value="Пробный урок">Пробный урок (бесплатно)</option>
-                        <option value="Разовый урок">Разовый урок</option>
-                        <option value="Пакет занятий">Пакет занятий</option>
-                    </select>
-                    
-                    <textarea name="message" placeholder="Ваши пожелания..." class="form-textarea" style="margin-bottom: 20px;"></textarea>
-                    
-                    <button type="submit" class="submit-btn">Отправить заявку</button>
-                    <div id="form-message"></div>
-                </form>
+                <!-- ВКЛАДКА 3: ЕГЭ -->
+                <div class="tab-content booking-tab-content" id="tab-ege" style="display: none;">
+                    <div class="services-grid">
+                        <div class="service-card" style="background: rgba(255,255,255,0.05); border: 1px solid #333;">
+                            <div class="card-icon">🧠</div>
+                            <h3 style="color: #FFFFFF;">Индивидуально</h3>
+                            <p style="color: #CCCCCC;">Фокус на сложные задачи второй части.</p>
+                            <button class="submit-btn" style="margin-top: auto; padding: 15px 20px; width: 100%;" onclick="selectExamFormat('ЕГЭ Индивидуально', '11')">Оставить заявку</button>
+                        </div>
+                        <div class="service-card" style="background: rgba(255,255,255,0.05); border: 1px solid #333;">
+                            <div class="card-icon">🚀</div>
+                            <h3 style="color: #FFFFFF;">В мини-группе</h3>
+                            <p style="color: #CCCCCC;">Разбор структуры экзамена в команде единомышленников.</p>
+                            <button class="submit-btn" style="margin-top: auto; padding: 15px 20px; width: 100%;" onclick="selectExamFormat('ЕГЭ Группа', '11')">Хочу в группу</button>
+                        </div>
+                    </div>
+                </div>
 
-                <div class="contact-info" style="margin-top: 30px;">
+                <div class="contact-info" style="margin-top: 40px;">
                     <p>📧 Email: 
                         <span class="email-copy-container">
                             <span class="email-copy" onclick="copyEmail('vectorschoolsupp@mail.ru')">vectorschoolsupp@mail.ru</span>
@@ -1389,5 +1571,54 @@
             });
         });
     </script>
+
+    <script>
+        // Функция для переключения вкладок формы
+        function openBookingTab(evt, tabId) {
+            let contents = document.getElementsByClassName("booking-tab-content");
+            for (let i = 0; i < contents.length; i++) {
+                contents[i].style.display = "none";
+            }
+            let btns = document.getElementById("booking-tabs").getElementsByClassName("tab-btn");
+            for (let i = 0; i < btns.length; i++) {
+                btns[i].classList.remove("active");
+            }
+            document.getElementById(tabId).style.display = "block";
+            evt.currentTarget.classList.add("active");
+            
+            // Сбрасываем тип занятия, если вернулись на главную вкладку
+            if(tabId === 'tab-school') {
+                document.getElementById('hidden-lesson-type').value = "Школьная программа";
+            }
+        }
+
+        // Функция, которая срабатывает при выборе группы/индива в ОГЭ и ЕГЭ
+        function selectExamFormat(format, grade) {
+            // Устанавливаем скрытые значения в форму
+            document.getElementById('hidden-lesson-type').value = format;
+            document.querySelector('#lesson-form [name=grade]').value = grade;
+            
+            // Программно переключаем пользователя на вкладку с формой
+            document.querySelector('#booking-tabs .tab-btn').click();
+            
+            // Плавно скроллим к форме
+            document.getElementById('lesson-form').scrollIntoView({behavior: 'smooth', block: 'center'});
+        }
+
+        // Функция для переключения вкладок с ценами
+        function openPricingTab(evt, tabId) {
+            let contents = document.getElementsByClassName("pricing-tab-content");
+            for (let i = 0; i < contents.length; i++) {
+                contents[i].style.display = "none";
+            }
+            let btns = document.getElementById("pricing-tabs").getElementsByClassName("tab-btn");
+            for (let i = 0; i < btns.length; i++) {
+                btns[i].classList.remove("active");
+            }
+            document.getElementById(tabId).style.display = "block";
+            evt.currentTarget.classList.add("active");
+        }
+    </script>
+
 </body>
 </html>
