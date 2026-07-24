@@ -64,7 +64,6 @@
                     <li><a href="#about" onclick="handleNavClick(event, 'about')">О школе</a></li>
                     <li><a href="#reviews" onclick="handleNavClick(event, 'reviews')">Отзывы</a></li>
                     <li><a href="#contact" onclick="handleNavClick(event, 'contact')">Контакты</a></li>
-                    <li><a href="#" class="nav-theory-link" onclick="handleTheoryClick(event)">Теория 📚</a></li>
                 </ul>
             </nav>
 
@@ -169,6 +168,13 @@
 
                         <div class="review-slide">
                             <div class="review">
+                                <blockquote>"Мы занимаемся 1,5 года: алгебра, геометрия, физика. Макс помог мне разобраться и быстро вникнуть в программу с середины 6 класса. Я в любой момент могу написать, если у меня есть какие-то вопросы, Макс всегда ответит. Спасибо Максу за помощь, учиться с ним намного легче."</blockquote>
+                                <cite>— Эрик, 6 класс</cite>
+                            </div>
+                        </div>
+
+                        <div class="review-slide">
+                            <div class="review">
                                 <blockquote>"Готовился с Максимом к ЕГЭ про профильной математике, очень понравились занятия, все было понятно и приятно объяснено, и с 0 баллов за пробники в мае 10 класса, добились 76 на ЕГЭ, очень рекомендую!!"</blockquote>
                                 <cite>— Дмитрий, 11 класс</cite>
                             </div>
@@ -183,7 +189,7 @@
 
                         <div class="review-slide">
                             <div class="review">
-                                <blockquote>"Лучший, иначе бы скажешь. Подтянул математику буквально с нуля и я сдала математику на заветную четвёрку! Кто планирует заниматься, обязательно на то как преподаёт Максим"</blockquote>
+                                <blockquote>"Лучший, иначе не скажешь. Подтянул математику буквально с нуля и я сдала математику на заветную четвёрку! Кто планирует заниматься, очень советую заниматься именно с Максимом!"</blockquote>
                                 <cite>— Наталия, 11 класс</cite>
                             </div>
                         </div>
@@ -198,9 +204,6 @@
         <section id="contact" class="contact">
             <div class="container">
                 <h2>Запишитесь на пробный урок</h2>
-                <p id="theory-promo-msg" style="color: #e67e22; font-weight: bold; display: none; margin-bottom: 20px; font-size: 1.1em;">
-    ⚠️ Чтобы получить доступ к теории, сначала запишитесь на урок или напишите преподавателю!
-</p>
                 <p>Заполните форму, и я свяжусь с вами в течение 2 часов.</p>
                 
                 <form id="lesson-form" class="booking-form">
@@ -310,12 +313,6 @@
                             <div id="student-progress-fill" style="background:#2ecc71; width:0%; height:100%; border-radius:6px; transition:width 1s ease-in-out;"></div>
                         </div>
                         <p id="student-progress-text" style="font-weight:bold; color:#2c3e50; margin:0;">Пройдено: 0%</p>
-                    </div>
-
-                    <!-- Теория -->
-                    <div id="theory-section-anchor" class="lk-card span-2" style="border-top:5px solid #9b59b6;">
-                        <h3 style="color:#8e44ad; margin-top:0;">📚 База знаний (Теория)</h3>
-                        <div id="student-theory-content"></div>
                     </div>
 
                     <!-- Занятия -->
@@ -975,7 +972,6 @@
                                         <button class="action-btn" onclick="updateProgress('${userId}', ${user.progress})">%</button>
                                         <button class="action-btn" style="background-color: #16a085;" onclick="setBalance('${userId}', ${user.lessonsLeft === undefined || user.lessonsLeft === null ? 0 : user.lessonsLeft})">Баланс</button>
                                         <button class="action-btn" style="background-color: #f39c12;" onclick="openLessonModal('${userId}')">Урок</button>
-                                        <button class="action-btn" style="background-color: ${theoryBtnColor};" onclick="toggleTheory('${userId}', ${theoryStatus})">Теория</button>
                                     </div>
                                     ${hwBadgeHtml}
                                     ${recentAnswersHtml}
