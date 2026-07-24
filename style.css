@@ -60,6 +60,7 @@ body.dark-theme .tab-btn {
 body.dark-theme .tab-btn.active {
     background-color: #4f46e5;
     color: #fff;
+    box-shadow: 0 4px 10px rgba(79, 70, 229, 0.4);
 }
 
 body.dark-theme .tab-btn:hover {
@@ -845,11 +846,79 @@ footer { background-color: #333; color: #fff; text-align: center; padding: 20px 
 .prev-btn { left: 0; }
 .next-btn { right: 0; }
 
-@media (max-width: 768px) {
-    h2 { font-size: 2em; }
-    header .container { flex-direction: column; }
-    nav ul { margin-top: 15px; flex-wrap: wrap; justify-content: center; }
-    nav ul li { margin: 5px 10px; }
+.header-controls {
+    display: flex;
+    align-items: center;
+    gap: 15px; /* Красивый отступ между луной, кнопкой и бургером */
+}
+
+/* Убедимся, что контейнер шапки работает правильно */
+header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+}
+
+/* Настройки для планшетов и телефонов */
+@media (max-width: 950px) {
+    /* Показываем кнопку-бутерброд */
+    .mobile-menu-btn { display: block !important; }
+    
+    /* Делаем меню аккуратным боковым окошком */
+    nav {
+        display: none; 
+        position: absolute;
+        top: 65px; /* Сдвигаем чуть вниз под шапку */
+        right: 20px; /* Делаем отступ от правого края */
+        width: 220px; /* Компактная ширина */
+        background-color: #fff;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        border-radius: 12px; /* Скругляем углы */
+        padding: 10px 0;
+        z-index: 100;
+        border-top: none; /* Убираем верхнюю линию */
+    }
+
+    /* Цвета окошка для тёмной темы */
+    body.dark-theme nav {
+        background-color: #1f2937;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+        border: 1px solid #334155;
+    }
+
+    /* Включаем видимость при нажатии */
+    nav.active { display: block !important; }
+
+    /* Выстраиваем ссылки внутри окошка */
+    nav ul { 
+        flex-direction: column !important;
+        margin: 0; 
+        padding: 0;
+        align-items: flex-start; 
+    }
+
+    nav ul li { 
+        margin: 0; 
+        width: 100%;
+    }
+
+    nav ul li a {
+        display: block;
+        padding: 12px 20px; /* Удобная зона клика */
+        width: 100%;
+        box-sizing: border-box;
+    }
+    
+    /* Легкая подсветка пунктов меню при наведении */
+    nav ul li a:hover {
+        background-color: rgba(52, 152, 219, 0.05);
+    }
+    body.dark-theme nav ul li a:hover {
+        background-color: rgba(96, 165, 250, 0.1);
+    }
+}
+
     .hero-school-name { font-size: 2.5em; }
     .hero-slogan { font-size: 1.1em; }
     .form-row { grid-template-columns: 1fr; }
@@ -857,7 +926,6 @@ footer { background-color: #333; color: #fff; text-align: center; padding: 20px 
     .category-title { text-align: center; border-left: none; border-bottom: 3px solid #f39c12; padding-bottom: 10px; padding-left: 0; margin-top: 30px; }
     .slider-btn { width: 35px; height: 35px; font-size: 1em; }
     .slider-container { padding: 0 35px; }
-}
 
 /* ========================================================
    СИСТЕМА КАБИНЕТА, РОЛЕЙ И АВТОРИЗАЦИИ
@@ -1071,4 +1139,75 @@ body.dark-theme .theme-switch input:checked + .theme-slider {
 .action-btn:hover { 
     background-color: #2980b9; 
     transform: scale(1.05); 
+}
+/* ========================================================
+   ОКОШКИ ДЛЯ ВКЛАДОК (СВЕТЛАЯ И ТЁМНАЯ ТЕМА)
+   ======================================================== */
+
+/* Общий контейнер: добавляем расстояние между кнопками */
+#auth-tabs-header {
+    display: flex;
+    gap: 12px; /* Расстояние между "окошками" */
+    background: transparent !important;
+    border-bottom: none !important;
+    margin-bottom: 25px;
+}
+
+/* --- СВЕТЛАЯ ТЕМА --- */
+#auth-tabs-header .tab-btn {
+    border-radius: 8px !important; /* Скругляем углы (перебиваем HTML) */
+    background-color: #f1f5f9 !important; /* Мягкий серый фон для неактивной кнопки */
+    color: #64748b !important; /* Спокойный цвет текста */
+    border: none !important;
+    transition: all 0.3s ease;
+    box-shadow: none !important;
+}
+
+#auth-tabs-header .tab-btn:hover {
+    background-color: #e2e8f0 !important; /* Чуть темнее при наведении */
+    color: #334155 !important;
+}
+
+#auth-tabs-header .tab-btn.active {
+    background-color: #f39c12 !important; /* Оранжевый цвет */
+    color: white !important;
+    box-shadow: 0 4px 10px rgba(243, 156, 18, 0.4) !important; /* Оранжевая тень */
+}
+
+/* --- ТЁМНАЯ ТЕМА --- */
+body.dark-theme #auth-tabs-header .tab-btn {
+    background-color: #374151 !important; /* Темно-серый фон неактивной кнопки */
+    color: #94a3b8 !important;
+}
+
+body.dark-theme #auth-tabs-header .tab-btn:hover {
+    background-color: #4b5563 !important; /* Высветляем при наведении */
+    color: #f8fafc !important;
+}
+
+body.dark-theme #auth-tabs-header .tab-btn.active {
+    background-color: #3b82f6 !important; /* Синий цвет */
+    color: white !important;
+    box-shadow: 0 4px 10px rgba(59, 130, 246, 0.4) !important; /* Синяя тень */
+}
+
+/* Меняем цвет боковой линии у заголовков категорий в тёмной теме */
+body.dark-theme .category-title {
+    border-left-color: #4f46e5 !important; /* Синий цвет в тон активных кнопок */
+    border-bottom-color: #4f46e5 !important;
+}
+
+/* Кнопка мобильного меню (скрыта на ПК) */
+.mobile-menu-btn {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 32px;
+    color: #2c3e50;
+    cursor: pointer;
+    padding: 0;
+}
+
+body.dark-theme .mobile-menu-btn {
+    color: #f8fafc;
 }

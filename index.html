@@ -51,26 +51,33 @@
 <body id="top">
     <header>
         <div class="container">
+            <!-- Логотип -->
             <a href="#top" class="logo" onclick="handleLogoClick(event)">
                  <img src="logo.png" alt="Логотип Vector" class="logo-icon">
                  <span>VECTOR</span>
             </a>
-            <nav>
+            
+            <!-- Основное меню (прячется в бутерброд) -->
+            <nav id="main-nav">
                 <ul>
                     <li><a href="#services" onclick="handleNavClick(event, 'services')">Услуги</a></li>
                     <li><a href="#about" onclick="handleNavClick(event, 'about')">О школе</a></li>
                     <li><a href="#reviews" onclick="handleNavClick(event, 'reviews')">Отзывы</a></li>
                     <li><a href="#contact" onclick="handleNavClick(event, 'contact')">Контакты</a></li>
                     <li><a href="#" class="nav-theory-link" onclick="handleTheoryClick(event)">Теория 📚</a></li>
-                    <li>
-                        <label class="theme-switch" title="Тёмная тема">
-                            <input id="theme-toggle-checkbox" type="checkbox" aria-label="Переключить тёмную тему" onchange="toggleTheme()">
-                            <span class="theme-slider"></span>
-                        </label>
-                    </li>
-                    <li><button id="auth-btn" class="auth-nav-btn">Войти</button></li>
                 </ul>
             </nav>
+
+            <!-- Элементы, которые всегда на виду -->
+            <div class="header-controls">
+                <label class="theme-switch" title="Тёмная тема">
+                    <input id="theme-toggle-checkbox" type="checkbox" aria-label="Переключить тёмную тему" onchange="toggleTheme()">
+                    <span class="theme-slider"></span>
+                </label>
+                <!-- Возвращаем кнопке её красивый дизайн с помощью класса auth-nav-btn -->
+                <button id="auth-btn" class="auth-nav-btn">Войти</button>
+                <button id="mobile-menu-btn" class="mobile-menu-btn">☰</button>
+            </div>
         </div>
     </header>
 
@@ -324,7 +331,7 @@
     <div id="auth-modal" class="modal">
         <div class="modal-content">
             <span class="close-modal" id="close-auth-modal">&times;</span>
-            <div id="auth-tabs-header" style="display: flex; margin-bottom: 25px; border-bottom: 2px solid #eee;">
+            <div id="auth-tabs-header" style="display: flex; margin-bottom: 25px; ">
                 <button id="tab-login" class="tab-btn active" style="flex: 1; border: none; border-radius: 0; padding: 12px; font-size: 1.1em;" onclick="switchAuthTab('login')">Вход</button>
                 <button id="tab-register" class="tab-btn" style="flex: 1; border: none; border-radius: 0; padding: 12px; font-size: 1.1em;" onclick="switchAuthTab('register')">Регистрация</button>
             </div>
@@ -1364,6 +1371,26 @@
                 submitBtn.disabled = false;
                 submitBtn.style.backgroundColor = '#f39c12';
             }
+        });
+    </script>
+    <script>
+        // Логика выпадающего мобильного меню
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileBtn = document.getElementById('mobile-menu-btn');
+            const navMenu = document.getElementById('main-nav');
+
+            // Открытие/закрытие меню по клику на бургер
+            mobileBtn.addEventListener('click', function() {
+                navMenu.classList.toggle('active');
+            });
+
+            // Автоматическое закрытие меню при клике на любую ссылку или кнопку внутри
+            const navItems = navMenu.querySelectorAll('a, button, label');
+            navItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    navMenu.classList.remove('active');
+                });
+            });
         });
     </script>
 </body>
