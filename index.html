@@ -583,6 +583,10 @@
                 <input type="text" id="auth-name" placeholder="Ваше имя" class="form-input" style="display: none; margin-bottom:15px;">
                 <input type="email" id="auth-email" placeholder="Email" required class="form-input" style="margin-bottom:15px;">
                 <input type="password" id="auth-password" placeholder="Пароль" required class="form-input" style="margin-bottom:20px;">
+                <label id="auth-consent-wrapper" style="display:none; align-items:flex-start; gap:8px; margin-bottom:20px; font-size:0.85em; line-height:1.4; color:#7f8c8d; cursor:pointer;">
+                    <input type="checkbox" id="auth-consent" style="margin-top:3px; flex-shrink:0;">
+                    <span>Я принимаю условия <a href="public-offer.html" target="_blank" style="color:#3498db;">Публичной оферты</a> и даю согласие на <a href="privacy-policy.html" target="_blank" style="color:#3498db;">обработку персональных данных</a></span>
+                </label>
                 <button type="submit" id="auth-submit-btn" class="submit-btn">Войти в кабинет</button>
                 <div id="auth-error" style="color: #e74c3c; margin-top: 10px; text-align: center; font-size: 0.9em; font-weight: bold;"></div>
             </form>
@@ -609,6 +613,10 @@
     <footer>
         <div class="container">
             <p>&copy; 2026 Vector School. Все права защищены.</p>
+            <p style="margin-top:8px; font-size:0.9em;">
+                <a href="privacy-policy.html" style="color:#D4FF19; text-decoration:none; margin:0 10px;">Политика конфиденциальности</a> ·
+                <a href="public-offer.html" style="color:#D4FF19; text-decoration:none; margin:0 10px;">Публичная оферта</a>
+            </p>
         </div>
     </footer>
 
@@ -834,6 +842,9 @@
             document.getElementById('auth-submit-btn').innerText = isLoginMode ? 'Войти' : 'Зарегистрироваться';
             document.getElementById('auth-name').style.display = isLoginMode ? 'none' : 'block';
             document.getElementById('auth-name').required = !isLoginMode;
+            document.getElementById('auth-consent-wrapper').style.display = isLoginMode ? 'none' : 'flex';
+            document.getElementById('auth-consent').checked = false;
+            document.getElementById('auth-error').innerText = '';
             document.getElementById('auth-error').innerText = '';
         }
 
@@ -884,6 +895,10 @@
             }
             if (!isLoginMode && (!name || name.length < 2)) {
                 authError.innerText = "Имя должно быть >= 2 символов";
+                return;
+            }
+            if (!isLoginMode && !document.getElementById('auth-consent').checked) {
+                authError.innerText = "Нужно принять оферту и согласие на обработку персональных данных";
                 return;
             }
             
