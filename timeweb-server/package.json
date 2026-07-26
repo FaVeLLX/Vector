@@ -1,0 +1,16 @@
+{
+  "name": "vector-timeweb-server",
+  "description": "Express-сервер для отправки Telegram-уведомлений (регистрация/заявка на урок), деплоится на Timeweb Cloud Apps",
+  "private": true,
+  "engines": {
+    "node": ">=20"
+  },
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2"
+  }
+}
