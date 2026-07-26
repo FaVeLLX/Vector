@@ -3,6 +3,8 @@ const cors = require('cors');
 
 const app = express();
 
+const path = require('path');
+
 // Разрешаем запросы с фронтенда (в проде лучше сузить до конкретного домена сайта
 // через переменную окружения ALLOWED_ORIGIN — см. блок ниже)
 const allowedOrigin = process.env.ALLOWED_ORIGIN || '*';
@@ -49,13 +51,7 @@ const sendTelegramMessage = async ({ token, chatId, text, messageThreadId }) => 
     return response.json();
 };
 
-// ==========================================================
-// Health-check — используйте этот путь в поле
-// «Путь проверки состояния» в настройках Timeweb
-// ==========================================================
-app.get('/health', (req, res) => {
-    res.status(200).json({ status: 'ok' });
-});
+app.use(express.static(path.join(__dirname, '.')));
 
 // ==========================================================
 // POST /sendRegistrationNotification
@@ -125,20 +121,15 @@ app.post('/sendBookingNotification', async (req, res) => {
     }
 });
 
+app.get('/', (req, res) => {
+    res.send('Vector School API is running!');
+});
+
 // ==========================================================
 // Запуск сервера — обязательно на 0.0.0.0, иначе Timeweb
 // не сможет проксировать внешние запросы на контейнер
 // ==========================================================
 const PORT = process.env.PORT || 8080;
-
-app.get('/', (req, res) => {
-    res.send('Vector School API is running!');
-});
-
-const path = require('path');
-
-// Раздаем все статичные файлы из папки с сервером
-app.use(express.static(path.join(__dirname, '.')));
 
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`Server running on port ${PORT}`);
