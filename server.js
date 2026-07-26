@@ -135,6 +135,11 @@ app.get('/', (req, res) => {
     res.send('Vector School API is running!');
 });
 
+const path = require('path');
+
+// Раздаем все статичные файлы из папки с сервером
+app.use(express.static(path.join(__dirname, '.')));
+
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`Server running on port ${PORT}`);
 });
