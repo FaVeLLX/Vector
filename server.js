@@ -4,6 +4,7 @@ const cors = require('cors');
 const app = express();
 
 const path = require('path');
+app.use(express.static(path.join(__dirname, '.')));
 
 // Разрешаем запросы с фронтенда (в проде лучше сузить до конкретного домена сайта
 // через переменную окружения ALLOWED_ORIGIN — см. блок ниже)
@@ -50,8 +51,6 @@ const sendTelegramMessage = async ({ token, chatId, text, messageThreadId }) => 
 
     return response.json();
 };
-
-app.use(express.static(path.join(__dirname, '.')));
 
 // ==========================================================
 // POST /sendRegistrationNotification
@@ -119,10 +118,6 @@ app.post('/sendBookingNotification', async (req, res) => {
         console.error('Ошибка отправки уведомления о заявке в Telegram:', err);
         res.status(500).json({ error: 'Не удалось отправить уведомление о заявке. Повторите позже.' });
     }
-});
-
-app.get('/', (req, res) => {
-    res.send('Vector School API is running!');
 });
 
 // ==========================================================
