@@ -698,27 +698,26 @@
         });
         const db = getFirestore(app);
 
-        window.sendBookingNotification = async function(data) {
-            const response = await fetch("/api/sendBookingNotification", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(data)
-            });
+        // Telegram-аккаунт для приёма заявок — сайт статический (Vercel),
+        // поэтому вместо тихой отправки на свой сервер мы открываем
+        // у посетителя Telegram с уже готовым текстом заявки.
+        const SUPPORT_TELEGRAM_USERNAME = "VectorSchoolSupp";
 
-            if (!response.ok) throw new Error('Не удалось отправить заявку.');
-            return { success: true };
-        };
-
-        window.sendRegistrationNotification = async function(data) {
-            const response = await fetch("/api/sendRegistrationNotification", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(data)
-            });
-
-            if (!response.ok) throw new Error('Не удалось отправить уведомление о регистрации.');
-            return { success: true };
-        };
+        function buildTelegramBookingLink(data) {
+            const lines = [
+                "🎉 Новая заявка на урок",
+                "",
+                `👤 Имя: ${data.name}`,
+                `📧 Email: ${data.email}`,
+                `📞 Телефон/Telegram: ${data.phone}`,
+                `📚 Предмет: ${data.subject || '-'}`,
+                `🏫 Класс: ${data.grade || '-'}`,
+                `🎯 Тип: ${data.lesson_type || '-'}`,
+                `💬 Сообщение: ${data.message || 'Нет'}`
+            ];
+            const text = encodeURIComponent(lines.join("\n"));
+            return `https://t.me/${SUPPORT_TELEGRAM_USERNAME}?text=${text}`;
+        }
 
         const authModal = document.getElementById("auth-modal");
         const authBtn = document.getElementById("auth-btn");
@@ -912,11 +911,11 @@
                         registeredAt: new Date().toISOString()
                     });
                     await logAuthAttempt(email, true);
-                    try {
-                        await sendRegistrationNotification({ name, email, userId: user.uid });
-                    } catch (notifyError) {
-                        console.warn('Не удалось отправить уведомление о регистрации:', notifyError);
-                    }
+                    // Уведомление о регистрации раньше уходило через бэкенд-сервер.
+                    // Сайт теперь статический (Vercel) — фоновое уведомление
+                    // без участия человека технически невозможно без бэкенда,
+                    // поэтому просто убрали этот шаг. Сама регистрация
+                    // (Firebase Auth) на это никак не влияет.
                 }
                 
                 authModal.style.display = "none"; 
@@ -1568,13 +1567,13 @@
                 return;
             }
 
-            submitBtn.textContent = 'Отправляем...';
+            submitBtn.textContent = 'Открываем Telegram...';
             submitBtn.disabled = true;
             submitBtn.style.backgroundColor = '#e67e22';
             messageDiv.innerHTML = '';
 
             try {
-                await sendBookingNotification({
+                const bookingData = {
                     name: formData.get('name')?.trim() || '',
                     email: formData.get('email')?.trim() || '',
                     phone: formData.get('phone')?.trim() || '',
@@ -1582,14 +1581,16 @@
                     grade: formData.get('grade') || '',
                     lesson_type: formData.get('lesson_type') || '',
                     message: formData.get('message') || ''
-                });
+                };
 
-                messageDiv.innerHTML = '<p style="color: #2ecc71;">✅ Спасибо! Заявка отправлена. Мы свяжемся с вами в течение 2 часов.</p>';
+                const telegramLink = buildTelegramBookingLink(bookingData);
+                window.open(telegramLink, '_blank');
+
+                messageDiv.innerHTML = '<p style="color: #2ecc71;">✅ Мы открыли Telegram с готовым текстом заявки — просто нажмите «Отправить» в чате, и мы свяжемся с вами в течение 2 часов.</p>';
                 this.reset();
             } catch (error) {
-                console.error('Ошибка отправки заявки:', error);
-                const message = error?.details || error?.message || error?.code || 'Ошибка при отправке. Попробуйте позже.';
-                messageDiv.innerHTML = `<p style="color: #e74c3c;">❌ ${message}</p>`;
+                console.error('Ошибка при открытии Telegram:', error);
+                messageDiv.innerHTML = `<p style="color: #e74c3c;">❌ Не получилось открыть Telegram. Напишите нам напрямую: <a href="https://t.me/${'VectorSchoolSupp'}" target="_blank">@VectorSchoolSupp</a></p>`;
             } finally {
                 submitBtn.textContent = 'Отправить заявку';
                 submitBtn.disabled = false;
