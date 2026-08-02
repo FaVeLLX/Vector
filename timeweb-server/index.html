@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Онлайн-школа Vector</title>
+    <title>Онлайн-школа Vectorium</title>
     <link rel="icon" href="logo.png" type="image/png">
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -53,8 +53,8 @@
         <div class="container">
             <!-- Логотип -->
             <a href="#top" class="logo" onclick="handleLogoClick(event)">
-                 <img src="logo.png" alt="Логотип Vector" class="logo-icon">
-                 <span>VECTOR</span>
+                 <img src="logo.png" alt="Логотип Vectorium" class="logo-icon">
+                 <span>VECTORIUM</span>
             </a>
             
             <!-- Основное меню (прячется в бутерброд) -->
@@ -86,7 +86,7 @@
         <!-- ================= ГЛАВНЫЙ ЭКРАН (HERO) ================= -->
         <section class="hero">
             <div class="container">
-                <div class="hero-school-name">VECTOR</div>
+                <div class="hero-school-name">VECTORIUM</div>
                 <div class="hero-slogan">ЗАДАЙ НАПРАВЛЕНИЕ К УСПЕХУ</div>
                 <a href="#contact" class="cta-button">Запись на бесплатную консультацию</a>
             </div>
@@ -127,9 +127,9 @@
         <!-- ================= О ШКОЛЕ ================= -->
         <section id="about" class="about">
             <div class="container">
-                <h2>О школе Vector</h2>
+                <h2>О школе Vectorium</h2>
                 <p style="margin-bottom: 20px;">
-                    <strong>Vector</strong> — это школа математики одного преподавателя. Здесь всё строится на понятном объяснении и личном внимании к каждому ученику.
+                    <strong>Vectorium</strong> — это школа математики одного преподавателя. Здесь всё строится на понятном объяснении и личном внимании к каждому ученику.
                 </p>
                 <p>
                     Я знаю школьную программу изнутри и понимаю, какие темы пугают учеников. Работаю как на индивидуальных занятиях, так и в небольших группах, чтобы математика стала понятной и уверенной.
@@ -478,7 +478,7 @@
                     <details class="faq-item">
                         <summary class="faq-accordion">Нужны ли какие-то учебники или материалы?<span class="faq-icon">+</span></summary>
                         <div class="faq-panel">
-                            <p>Покупать ничего не нужно. Всю необходимую информацию, теорию, формулы и домашние задания я предоставляю в электронном виде бесплатно для учеников школы Vector.</p>
+                            <p>Покупать ничего не нужно. Всю необходимую информацию, теорию, формулы и домашние задания я предоставляю в электронном виде бесплатно для учеников школы Vectorium.</p>
                         </div>
                     </details>
 
@@ -578,7 +578,7 @@
                 <button id="tab-login" class="tab-btn active" style="flex: 1; border: none; border-radius: 0; padding: 12px; font-size: 1.1em;" onclick="switchAuthTab('login')">Вход</button>
                 <button id="tab-register" class="tab-btn" style="flex: 1; border: none; border-radius: 0; padding: 12px; font-size: 1.1em;" onclick="switchAuthTab('register')">Регистрация</button>
             </div>
-            <h3 id="auth-title" style="text-align:center; margin-bottom:20px; color: #2c3e50;">Вход в Vector</h3>
+            <h3 id="auth-title" style="text-align:center; margin-bottom:20px; color: #2c3e50;">Вход в Vectorium</h3>
             <form id="auth-form">
                 <input type="text" id="auth-name" placeholder="Ваше имя" class="form-input" style="display: none; margin-bottom:15px;">
                 <input type="email" id="auth-email" placeholder="Email" required class="form-input" style="margin-bottom:15px;">
@@ -612,7 +612,7 @@
 
     <footer>
         <div class="container">
-            <p>&copy; 2026 Vector School. Все права защищены.</p>
+            <p>&copy; 2026 Vectorium. Все права защищены.</p>
             <p style="margin-top:8px; font-size:0.9em;">
                 <a href="privacy-policy.html" style="color:#D4FF19; text-decoration:none; margin:0 10px;">Политика конфиденциальности</a> ·
                 <a href="public-offer.html" style="color:#D4FF19; text-decoration:none; margin:0 10px;">Публичная оферта</a>
@@ -838,7 +838,7 @@
             isLoginMode = mode === 'login';
             document.getElementById('tab-login').classList.toggle('active', isLoginMode);
             document.getElementById('tab-register').classList.toggle('active', !isLoginMode);
-            document.getElementById('auth-title').innerText = isLoginMode ? 'Вход в Vector' : 'Регистрация';
+            document.getElementById('auth-title').innerText = isLoginMode ? 'Вход в Vectorium' : 'Регистрация';
             document.getElementById('auth-submit-btn').innerText = isLoginMode ? 'Войти' : 'Зарегистрироваться';
             document.getElementById('auth-name').style.display = isLoginMode ? 'none' : 'block';
             document.getElementById('auth-name').required = !isLoginMode;
