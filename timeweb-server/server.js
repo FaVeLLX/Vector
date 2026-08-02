@@ -28,33 +28,62 @@ const getTelegramConfig = () => {
     return { token, chatId, baseChatId };
 };
 
-const sendTelegramMessage = async ({ token, chatId, text, messageThreadId }) => {
-    if (!token || !chatId) {
-        throw new Error('Telegram token or chat ID is not configured');
-    }
+const https = require('https');
 
-    const payload = {
-        chat_id: chatId,
-        text,
-        parse_mode: 'HTML',
-    };
+const sendTelegramMessage = ({ token, chatId, text, messageThreadId }) => {
+    return new Promise((resolve, reject) => {
+        if (!token || !chatId) {
+            return reject(new Error('Telegram token or chat ID is not configured'));
+        }
 
-    if (messageThreadId !== undefined) {
-        payload.message_thread_id = messageThreadId;
-    }
+        const payload = {
+            chat_id: chatId,
+            text,
+            parse_mode: 'HTML',
+        };
 
-    const response = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
+        if (messageThreadId !== undefined) {
+            payload.message_thread_id = messageThreadId;
+        }
+
+        const data = JSON.stringify(payload);
+
+        const options = {
+            hostname: 'api.telegram.org',
+            port: 443,
+            path: `/bot${token}/sendMessage`,
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Content-Length': Buffer.byteLength(data)
+            }
+        };
+
+        const req = https.request(options, (res) => {
+            let body = '';
+            res.on('data', (chunk) => {
+                body += chunk;
+            });
+            res.on('end', () => {
+                if (res.statusCode >= 200 && res.statusCode < 300) {
+                    try {
+                        resolve(JSON.parse(body));
+                    } catch (e) {
+                        resolve({ ok: true });
+                    }
+                } else {
+                    reject(new Error(`Telegram error ${res.statusCode}: ${body}`));
+                }
+            });
+        });
+
+        req.on('error', (error) => {
+            reject(error);
+        });
+
+        req.write(data);
+        req.end();
     });
-
-    if (!response.ok) {
-        const body = await response.text();
-        throw new Error(`Telegram error ${response.status}: ${body}`);
-    }
-
-    return response.json();
 };
 
 // ==========================================================

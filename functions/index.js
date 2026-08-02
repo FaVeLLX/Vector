@@ -1,5 +1,7 @@
 const functions = require("firebase-functions");
 
+require('express')
+
 const getTelegramConfig = () => {
     const config = functions.config && functions.config();
     const token = process.env.TELEGRAM_TOKEN || config?.telegram?.token;
@@ -99,3 +101,55 @@ exports.sendBookingNotification = functions.https.onCall(async (data, context) =
 
     return { success: true };
 });
+
+const functions = require("firebase-functions");
+const express = require("express");
+
+// ==========================================================
+// Прокси до Telegram Bot API через Firebase Cloud Functions.
+//
+// Зачем нужен: сервер на Timeweb не может напрямую достучаться
+// до api.telegram.org (сетевая блокировка/таймаут). Google Cloud
+// такой блокировки не имеет, поэтому эта функция просто
+// пересылает запрос дальше в Telegram и возвращает ответ как есть.
+//
+// После деплоя (firebase deploy --only functions) Firebase покажет
+// URL вида:
+//   https://us-central1-<project-id>.cloudfunctions.net/telegramProxy
+//
+// Дальше просто:
+//   TELEGRAM_API_BASE=https://us-central1-<project-id>.cloudfunctions.net/telegramProxy
+// в переменных окружения на Timeweb — остальной код server.js
+// менять не нужно, он уже это поддерживает.
+// ==========================================================
+
+const app = express();
+app.use(express.json());
+
+app.all("*", async (req, res) => {
+    try {
+        // req.path здесь будет вида /bot<TOKEN>/sendMessage —
+        // ровно то же самое, что ожидает настоящий Telegram API
+        const telegramUrl = `https://api.telegram.org${req.path}`;
+
+        const telegramResponse = await fetch(telegramUrl, {
+            method: req.method,
+            headers: { "Content-Type": "application/json" },
+            body: req.method === "GET" || req.method === "HEAD"
+                ? undefined
+                : JSON.stringify(req.body),
+        });
+
+        const contentType = telegramResponse.headers.get("content-type") || "application/json";
+        const body = await telegramResponse.text();
+
+        res.status(telegramResponse.status);
+        res.set("Content-Type", contentType);
+        res.send(body);
+    } catch (err) {
+        console.error("Ошибка прокси до Telegram:", err);
+        res.status(502).json({ error: "Не удалось связаться с Telegram API" });
+    }
+});
+
+exports.telegramProxy = functions.https.onRequest(app);
