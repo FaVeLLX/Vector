@@ -698,57 +698,22 @@
         });
         const db = getFirestore(app);
 
-        // 1. Отправка заявки на урок
         window.sendBookingNotification = async function(data) {
-            const token = "ВАШ_ТОКЕН_ЗДЕСЬ";
-            const chatId = "ВАШ_ID_ЧАТА_ЗДЕСЬ";
-
-            const fullMessage = `
-🚀 <b>Новая заявка с сайта!</b>
-
-<b>Имя:</b> ${data?.name || '-'}
-<b>Контакты:</b> ${data?.phone || '-'} / ${data?.email || '-'}
-<b>Класс:</b> ${data?.grade || '-'}
-<b>Тип занятия:</b> ${data?.lesson_type || '-'}
-
-<b>Пожелания:</b> 
-${data?.message || 'Нет'}
-            `.trim();
-
-            const response = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+            const response = await fetch("/api/sendBookingNotification", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    chat_id: chatId,
-                    text: fullMessage,
-                    parse_mode: "HTML"
-                })
+                body: JSON.stringify(data)
             });
 
-            if (!response.ok) throw new Error('Не удалось отправить заявку в Telegram.');
+            if (!response.ok) throw new Error('Не удалось отправить заявку.');
             return { success: true };
         };
 
-        // 2. Отправка уведомления о регистрации
         window.sendRegistrationNotification = async function(data) {
-            const token = "ВАШ_ТОКЕН_ЗДЕСЬ";
-            const chatId = "ВАШ_ID_ЧАТА_ЗДЕСЬ";
-
-            const fullMessage = `
-👤 <b>Новая регистрация в кабинете!</b>
-
-<b>Имя:</b> ${data?.name || '-'}
-<b>Email:</b> ${data?.email || '-'}
-            `.trim();
-
-            const response = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+            const response = await fetch("/api/sendRegistrationNotification", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    chat_id: chatId,
-                    text: fullMessage,
-                    parse_mode: "HTML"
-                })
+                body: JSON.stringify(data)
             });
 
             if (!response.ok) throw new Error('Не удалось отправить уведомление о регистрации.');
