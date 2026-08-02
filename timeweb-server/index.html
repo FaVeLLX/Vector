@@ -1664,10 +1664,23 @@
             // Устанавливаем скрытые значения в форму
             document.getElementById('hidden-lesson-type').value = format;
             document.querySelector('#lesson-form [name=grade]').value = grade;
-            
-            // Программно переключаем пользователя на вкладку с формой
-            document.querySelector('#booking-tabs .tab-btn').click();
-            
+
+            // Определяем, к какому табу относится этот формат (ОГЭ/ЕГЭ/школьная),
+            // и переключаемся именно на него — раньше тут всегда кликало
+            // по первой кнопке ("Школьная программа"), из-за чего и таб был не тот,
+            // и формат сбрасывался обратно на "Школьная программа"
+            let targetTabId = 'tab-school';
+            if (format.startsWith('ОГЭ')) {
+                targetTabId = 'tab-oge';
+            } else if (format.startsWith('ЕГЭ')) {
+                targetTabId = 'tab-ege';
+            }
+
+            const targetTabBtn = document.querySelector(`#booking-tabs .tab-btn[onclick*="${targetTabId}"]`);
+            if (targetTabBtn) {
+                targetTabBtn.click();
+            }
+
             // Плавно скроллим к форме
             document.getElementById('lesson-form').scrollIntoView({behavior: 'smooth', block: 'center'});
         }
